@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MainPage from './components/MainPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Score from './components/Score';
 
 ReactDOM.render(
   <React.StrictMode>

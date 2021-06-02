@@ -1,8 +1,25 @@
 import React, { Component } from 'react';
 import { PlayButton, AddButton, PauseButton,
-        GenerateButton, DownloadButton, BackspaceButton } from './Buttons';
+        GenerateButton, DownloadButton, BackspaceButton, SemibreveBtn, MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn } from './Buttons';
 import { ButtonGroup, ButtonToolbar, Badge } from 'react-bootstrap'
+
 export default class Toolbar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            note: 'C4'
+        };
+        this.handleOnChangeNote = this.handleOnChangeNote.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.onChangeNote(this.state.note);
+    }
+
+    handleOnChangeNote(e) {
+        this.props.onChangeNote(e);
+    }
+
     render() {
         const noteRange = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6']
         const divStyle = {
@@ -46,19 +63,34 @@ export default class Toolbar extends Component {
                     <option disabled>Chord</option>
                 </select>
                 <hr></hr>
-                <label htmlFor="time">Choose time</label>
-                <select name="time" id="time">
-                    <option>2/4</option>
-                    <option>3/4</option>
-                    <option selected>4/4</option>
-                </select>
-                <hr></hr>
                 <label htmlFor="note">Note</label>
-                <select name="note" id="note">
+                <select name="note" id="note" onChange={(e) => this.handleOnChangeNote(e.target.value)}>
                     { noteRange.map((v, idx) => {
                         return <option key={idx}>{v}</option>
                     })}
                 </select>
+                <hr></hr>
+                <ButtonToolbar style={centerStyle}>
+                <ButtonGroup>
+                    {/* <SemibreveBtn onClickSemibreve={() => this.handleNoteSemibreve()}/>{' '} */}
+                    <SemibreveBtn onClickNote={this.props.onClickNote}/>{' '}
+                    <MinimBtn onClickNote={this.props.onClickNote}/>
+                </ButtonGroup>
+                </ButtonToolbar>
+                <hr></hr>
+                <ButtonToolbar style={centerStyle}>
+                <ButtonGroup>
+                    <CrotchetBtn onClickNote={this.props.onClickNote}/>{' '}
+                    <QuaverBtn onClickNote={this.props.onClickNote}/>
+                </ButtonGroup>
+                </ButtonToolbar>
+                <hr></hr>
+                <ButtonToolbar style={centerStyle}>                
+                <ButtonGroup>
+                    <SemiQuaverBtn onClickNote={this.props.onClickNote}/>{' '}
+                    <DemisemiQuaverBtn onClickNote={this.props.onClickNote}/>
+                </ButtonGroup>                    
+                </ButtonToolbar>
             </div>
         )
     }
