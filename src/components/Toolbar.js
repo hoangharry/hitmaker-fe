@@ -21,7 +21,7 @@ export default class Toolbar extends Component {
     }
 
     render() {
-        const noteRange = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5', 'C6']
+        const noteRange = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
         const divStyle = {
             margin: '0',
             // padding: '0',

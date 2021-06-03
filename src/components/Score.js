@@ -9,7 +9,7 @@ export default class Score extends Component {
 
     }
     
-    checkNotes() {
+    checkNotes(notes) {
         let mapDuration = new Map();
         mapDuration.set("w", 32);
         mapDuration.set("h", 16);
@@ -17,15 +17,14 @@ export default class Score extends Component {
         mapDuration.set("8", 4);
         mapDuration.set("16", 2);
         mapDuration.set("32", 1);
-
+        let numNotesAdd = 0;
         let sumDuration = 0;
         notes.forEach((e) => {
             sumDuration += mapDuration.get(e.duration);
         });
         if (sumDuration % 32 === 0) {
-            console.log("notes enough")
+            console.log("notes enough");
         } else {
-            let numNotesAdd = 0;
             let remainder = Math.ceil(sumDuration/32)*32 - sumDuration;
             for (let i = 16; i !== 0; i = Math.trunc(i/2)) {
                 const quotient = Math.floor(remainder/i);
@@ -35,7 +34,7 @@ export default class Score extends Component {
                     numNotesAdd += quotient;
                     let duration = [...mapDuration.entries()].find(([k, v]) => v === i)[0];
                     for (let j = 0; j < quotient; j++) {
-                        notes.push({ note: "C4", duration: duration});
+                        notes.push(new VF.StaveNote({keys: ["D/4"], duration: duration}));
                     }
                     remainder %= i;
                     if (remainder === 0) {
@@ -45,6 +44,7 @@ export default class Score extends Component {
             }
             console.log('notes added', notes);
         }
+        return {notes, numNotesAdd};
     }
 
 
@@ -54,38 +54,70 @@ export default class Score extends Component {
     }
     
     renderPage() {
-        console.log('render');
         var notesProp = this.props.notes;
-        notesProp = [
-            { note: "C/4", duration: "q"},
-            { note: "D/4", duration: "q"},
-            { note: "B/4", duration: "q"},
-            // { note: "C/4", duration: "q"}
-        ]
         const svgContainer = document.getElementById('new-song');
         
         var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG);
-        renderer.resize(500, 500);
+        renderer.resize(1000, 1000);
         var context = renderer.getContext();
-        var stave = new VF.Stave(10, 40, 400);
+        var stave = new VF.Stave(10, 0, 300);
         stave.addClef('treble').addTimeSignature('4/4');
         stave.setContext(context).draw();
         console.log('notesProp', notesProp);
         if (notesProp.length !== 0) {
-            var notes = [];
-            notesProp.forEach((element) => {
-                notes.push(new VF.StaveNote({ clef: "treble", keys: [element.note], duration: element.duration}));
+            console.log('render here');
+            let notes = notesProp;
+            let mapDuration = new Map();
+            mapDuration.set("w", 32);
+            mapDuration.set("h", 16);
+            mapDuration.set("q", 8);
+            mapDuration.set("8", 4);
+            mapDuration.set("16", 2);
+            mapDuration.set("32", 1);
+            let tmpduration = 0;
+            let prevStave;
+            var tmpNotes = [];
+            var isFisrt = true;
+            notes.forEach((v, idx) => {
+                console.log(v, idx);
+                tmpduration += mapDuration.get(v.duration);
+                tmpNotes.push(new VF.StaveNote({ keys: [v.note], duration: v.duration}));
+                console.log('ua towi day chuwa mas');
+                console.log('tmpduration', tmpduration);
+                if (tmpduration === 32) {
+                    console.log('tmpduration is 32');
+                    if (isFisrt) {
+                        VF.Formatter.FormatAndDraw(context, stave, tmpNotes);
+                        prevStave = stave;
+                        isFisrt = false;
+                    } else {
+                        console.log('tmpNotes', tmpNotes);
+                        var tmpStave = new VF.Stave(prevStave.width + prevStave.x, 0, tmpNotes.length*50);
+                        tmpStave.setContext(context).draw();
+                        VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
+                        prevStave = tmpStave;
+                    }
+                    tmpNotes = [];
+                    tmpduration = 0;
+                } else {                 
+                    if (idx === notes.length - 1) {
+                        console.log('last note is not enough 32');
+                        var lastStave = this.checkNotes(tmpNotes);
+                        console.log('laststave', lastStave);
+                        if (isFisrt) {
+                            VF.Formatter.FormatAndDraw(context, stave, lastStave.notes);
+                        } else {
+                            var tmpStave = new VF.Stave(prevStave.width + prevStave.x, 0, lastStave.notes.length*50);
+                            tmpStave.setContext(context).draw();
+                            VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes);
+                        }
+                        const vfNotes = document.getElementsByClassName("vf-stavenote");
+                        for (let i = 1; i <= lastStave.numNotesAdd; i++) {
+                            vfNotes[vfNotes.length - i].setAttribute("hidden", true);
+                        }
+                    }                
+                }
             });
-            // var notes = [
-            //     new VF.StaveNote({clef:"treble", keys: ["c/4"], duration: "q"}),
-            //     new VF.StaveNote({clef:"treble", keys: ["d/4"], duration: "q"}),
-            //     new VF.StaveNote({clef:"treble", keys: ["b/4"], duration: "q"}),
-            //     new VF.StaveNote({clef:"treble", keys: ["c/4"], duration: "q"})
-            // ];
-            var voice = new VF.Voice({num_beats: 4, beat_value: 4});
-            voice.addTickables(notes);
-            var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-            voice.draw(context, stave);
         }
 
         // var vf = new VF.Factory({
