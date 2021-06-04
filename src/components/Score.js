@@ -6,24 +6,22 @@ const VF = Vex.Flow;
 export default class Score extends Component {
     constructor(props) {
         super(props);
-
+        this.mapDuration = new Map();
+        this.mapDuration.set("w", 32);
+        this.mapDuration.set("h", 16);
+        this.mapDuration.set("q", 8);
+        this.mapDuration.set("8", 4);
+        this.mapDuration.set("16", 2);
+        this.mapDuration.set("32", 1);
     }
     
     checkNotes(notes) {
-        let mapDuration = new Map();
-        mapDuration.set("w", 32);
-        mapDuration.set("h", 16);
-        mapDuration.set("q", 8);
-        mapDuration.set("8", 4);
-        mapDuration.set("16", 2);
-        mapDuration.set("32", 1);
         let numNotesAdd = 0;
         let sumDuration = 0;
         notes.forEach((e) => {
-            sumDuration += mapDuration.get(e.duration);
+            sumDuration += this.mapDuration.get(e.duration);
         });
         if (sumDuration % 32 === 0) {
-            console.log("notes enough");
         } else {
             let remainder = Math.ceil(sumDuration/32)*32 - sumDuration;
             for (let i = 16; i !== 0; i = Math.trunc(i/2)) {
@@ -32,7 +30,7 @@ export default class Score extends Component {
                     continue;
                 } else {
                     numNotesAdd += quotient;
-                    let duration = [...mapDuration.entries()].find(([k, v]) => v === i)[0];
+                    let duration = [...this.mapDuration.entries()].find(([k, v]) => v === i)[0];
                     for (let j = 0; j < quotient; j++) {
                         notes.push(new VF.StaveNote({keys: ["D/4"], duration: duration}));
                     }
@@ -42,7 +40,6 @@ export default class Score extends Component {
                     }
                 }
             }
-            console.log('notes added', notes);
         }
         return {notes, numNotesAdd};
     }
@@ -65,33 +62,21 @@ export default class Score extends Component {
         stave.setContext(context).draw();
         console.log('notesProp', notesProp);
         if (notesProp.length !== 0) {
-            console.log('render here');
             let notes = notesProp;
-            let mapDuration = new Map();
-            mapDuration.set("w", 32);
-            mapDuration.set("h", 16);
-            mapDuration.set("q", 8);
-            mapDuration.set("8", 4);
-            mapDuration.set("16", 2);
-            mapDuration.set("32", 1);
             let tmpduration = 0;
             let prevStave;
             var tmpNotes = [];
             var isFisrt = true;
             notes.forEach((v, idx) => {
                 console.log(v, idx);
-                tmpduration += mapDuration.get(v.duration);
+                tmpduration += this.mapDuration.get(v.duration);
                 tmpNotes.push(new VF.StaveNote({ keys: [v.note], duration: v.duration}));
-                console.log('ua towi day chuwa mas');
-                console.log('tmpduration', tmpduration);
                 if (tmpduration === 32) {
-                    console.log('tmpduration is 32');
                     if (isFisrt) {
                         VF.Formatter.FormatAndDraw(context, stave, tmpNotes);
                         prevStave = stave;
                         isFisrt = false;
                     } else {
-                        console.log('tmpNotes', tmpNotes);
                         var tmpStave = new VF.Stave(prevStave.width + prevStave.x, 0, tmpNotes.length*50);
                         tmpStave.setContext(context).draw();
                         VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
@@ -101,7 +86,6 @@ export default class Score extends Component {
                     tmpduration = 0;
                 } else {                 
                     if (idx === notes.length - 1) {
-                        console.log('last note is not enough 32');
                         var lastStave = this.checkNotes(tmpNotes);
                         console.log('laststave', lastStave);
                         if (isFisrt) {
@@ -119,72 +103,6 @@ export default class Score extends Component {
                 }
             });
         }
-
-        // var vf = new VF.Factory({
-        //     renderer: {elementId: svgContainer, width: 500, height: 200}
-        // });
-        // var score = vf.EasyScore();
-        // var system = vf.System();
-        // system.addStave({
-        //     voices: [score.voice(score.notes('C5/q, B4').concat(score.notes('A4/8, G4, C5, B4')))]
-        // }).addClef('treble').addTimeSignature('4/4');
-        // vf.draw();
-
-
-    
-        // var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG);
-        // // Size our SVG:
-        // renderer.resize(500, 500);
-
-        // // And get a drawing context:
-        // var context = renderer.getContext();
-        // var stave = new VF.Stave(10, 40, 400);
-        // stave.addClef('treble').addTimeSignature('4/4');
-        // stave.setContext(context).draw();
-        // var notes = [
-        //     // A quarter-note C.
-        //     new VF.StaveNote({clef: "treble", keys: ["c/4"], duration: "q" }),
-          
-        //     // A quarter-note D.
-        //     new VF.StaveNote({clef: "treble", keys: ["d/4"], duration: "q" }),
-          
-        //     // A quarter-note rest. Note that the key (b/4) specifies the vertical
-        //     // position of the rest.
-        //     new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr" }),
-          
-        //     // A C-Major chord.
-        //     new VF.StaveNote({clef: "treble", keys: ["c/4", "e/4", "g/4"], duration: "q" })
-        // ];
-        // console.log('notes', notes);
-        // var voice = new VF.Voice({num_beats: 4, beat_value: 4});
-        // voice.addTickable(notes);
-        // var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-        // voice.draw(context, stave);
-        // if (notesProp.length === 0) {
-        //     console.log('notes = 0');
-        //     stave.setContext(context).draw();
-        // } else {
-        //     console.log('notes > 0');
-        //     var notes = [
-        //         // A quarter-note C.
-        //         new VF.StaveNote({clef: "treble", keys: ["c/4"], duration: "q" }),
-              
-        //         // A quarter-note D.
-        //         new VF.StaveNote({clef: "treble", keys: ["d/4"], duration: "q" }),
-              
-        //         // A quarter-note rest. Note that the key (b/4) specifies the vertical
-        //         // position of the rest.
-        //         new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr" }),
-              
-        //         // A C-Major chord.
-        //         new VF.StaveNote({clef: "treble", keys: ["c/4", "e/4", "g/4"], duration: "q" })
-        //     ];
-        //     console.log('notes', notes);
-        //     var voice = new VF.Voice({num_beats: 4, beat_value: 4});
-        //     voice.addTickable(notes);
-        //     var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-        //     voice.draw(context, stave);
-        // }
     }
 
     render() {

@@ -15,11 +15,16 @@ const btnStyle = {
 class AddButton extends Component {
     constructor(props) {
         super(props);
+        this.handleOnCLick = this.handleOnCLick.bind(this);
+    }
+
+    handleOnCLick() {
+        this.props.onAddNew();
     }
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg">
+            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
             <Icon.FileEarmarkPlus/>
             </Button>
         )
@@ -142,11 +147,16 @@ class DemisemiQuaverBtn extends Component {
 class PlayButton extends Component {
     constructor(props) {
         super(props);
+        this.handleOnCLick = this.handleOnCLick.bind(this);
+    }
+
+    handleOnCLick() {
+        this.props.onPlay();
     }
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg">
+            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
                 <Icon.PlayBtn/>
             </Button>            
         )
@@ -156,11 +166,16 @@ class PlayButton extends Component {
 class PauseButton extends Component {
     constructor(props) {
         super(props);
+        this.handleOnCLick = this.handleOnCLick.bind(this);
+    }
+
+    handleOnCLick() {
+        this.props.onPause()
     }
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg">
+            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
                 <Icon.PauseBtn/>
             </Button>  
         )
@@ -170,11 +185,16 @@ class PauseButton extends Component {
 class GenerateButton extends Component {
     constructor(props) {
         super(props);
+        this.handleOnCLick = this.handleOnCLick.bind(this);
+    }
+
+    handleOnCLick() {
+        this.props.onGenerate();
     }
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg">
+            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
                 <Icon.ArrowClockwise/>
             </Button>  
         )
@@ -184,11 +204,16 @@ class GenerateButton extends Component {
 class DownloadButton extends Component {
     constructor(props) {
         super(props);
+        this.handleOnCLick = this.handleOnCLick.bind(this);
+    }
+
+    handleOnCLick() {
+        this.props.onDownload()
     }
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg">
+            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
                 <Icon.BoxArrowDown/>
             </Button>  
         )
@@ -198,11 +223,16 @@ class DownloadButton extends Component {
 class BackspaceButton extends Component {
     constructor(props) {
         super(props);
+        this.handleOnCLick = this.handleOnCLick.bind(this);
+    }
+
+    handleOnCLick() {
+        this.props.onDeleteNote();
     }
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg">
+            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
                 <Icon.Backspace/>
             </Button>
         )

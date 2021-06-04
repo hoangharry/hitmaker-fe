@@ -7,7 +7,7 @@ export default class Toolbar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            note: 'C4'
+            note: 'C/4'
         };
         this.handleOnChangeNote = this.handleOnChangeNote.bind(this);
     }
@@ -19,6 +19,7 @@ export default class Toolbar extends Component {
     handleOnChangeNote(e) {
         this.props.onChangeNote(e);
     }
+
 
     render() {
         const noteRange = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
@@ -38,22 +39,22 @@ export default class Toolbar extends Component {
                 <hr></hr>
                 <ButtonToolbar style={centerStyle}>
                 <ButtonGroup>
-                    <AddButton/>{' '}
-                    <BackspaceButton/>
+                    <AddButton onAddNew={this.props.onAddNew}/>{' '}
+                    <BackspaceButton onDeleteNote={this.props.onDeleteNote}/>
                 </ButtonGroup>
                 </ButtonToolbar>
                 <hr></hr>
                 <ButtonToolbar style={centerStyle}>
                 <ButtonGroup>
-                    <PlayButton/>{' '}
-                    <PauseButton/>
+                    <PlayButton onPlay={this.props.onPlay}/>{' '}
+                    <PauseButton onPause={this.props.onPause}/>
                 </ButtonGroup>
                 </ButtonToolbar>
                 <hr></hr>
                 <ButtonToolbar style={centerStyle}>                
                 <ButtonGroup>
-                    <GenerateButton/>{' '}
-                    <DownloadButton/>
+                    <GenerateButton onGenerate={this.props.onGenerate}/>{' '}
+                    <DownloadButton onDownload={this.props.onDownload}/>
                 </ButtonGroup>                    
                 </ButtonToolbar>
                 <hr></hr>
