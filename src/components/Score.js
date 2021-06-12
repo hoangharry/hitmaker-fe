@@ -1,5 +1,6 @@
 import Vex from 'vexflow';
 import React, {Component} from 'react';
+import context from 'react-bootstrap/esm/AccordionContext';
 
 const VF = Vex.Flow;
 
@@ -43,9 +44,13 @@ export default class Score extends Component {
         }
         return {notes, numNotesAdd};
     }
+    
+    componentDidMount() {
+        this.renderPage();
+    }
 
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps, prevState){
         document.getElementById('new-song').innerHTML = "";
         this.renderPage();
     }
@@ -55,29 +60,55 @@ export default class Score extends Component {
         const svgContainer = document.getElementById('new-song');
         
         var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG);
-        renderer.resize(1000, 1000);
+        const width = svgContainer.getBoundingClientRect().width;
+        renderer.resize(width, 1000);
         var context = renderer.getContext();
-        var stave = new VF.Stave(10, 0, 300);
-        stave.addClef('treble').addTimeSignature('4/4');
-        stave.setContext(context).draw();
-        console.log('notesProp', notesProp);
-        if (notesProp.length !== 0) {
+
+        if (notesProp.length === 0) {
+            var stave = new VF.Stave(10, 0, 300);
+            stave.addClef('treble').addTimeSignature('4/4');
+            stave.setContext(context).draw();
+        } else {
             let notes = notesProp;
-            let tmpduration = 0;
+            let tmpduration = 0, staveX = 10, staveY = 0;
             let prevStave;
             var tmpNotes = [];
             var isFisrt = true;
             notes.forEach((v, idx) => {
-                console.log(v, idx);
                 tmpduration += this.mapDuration.get(v.duration);
                 tmpNotes.push(new VF.StaveNote({ keys: [v.note], duration: v.duration}));
+                var tmpStave;
                 if (tmpduration === 32) {
                     if (isFisrt) {
-                        VF.Formatter.FormatAndDraw(context, stave, tmpNotes);
-                        prevStave = stave;
+                        console.log('1')
+                        tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50);
+                        tmpStave.addClef('treble').addTimeSignature('4/4');
+                        tmpStave.setContext(context).draw();
+                        VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
+                        prevStave = tmpStave;
                         isFisrt = false;
                     } else {
-                        var tmpStave = new VF.Stave(prevStave.width + prevStave.x, 0, tmpNotes.length*50);
+                        console.log("prevStave x", prevStave.x);
+                        console.log("x", 0.9*width);
+                        const noteWidth = Math.trunc((width - (prevStave.x + prevStave.width) - 10)/tmpNotes.length);
+                        console.log('params', width, prevStave.x + prevStave.width)
+                        console.log('witdh left', width - (prevStave.x + prevStave.width));
+                        console.log('widthnote', noteWidth);
+                        if (noteWidth < 20) {
+                            console.log('2');
+                            staveX = 10;
+                            staveY += 100;
+                            tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50).addClef('treble').addTimeSignature('4/4');
+                        } else if (noteWidth < 50) {
+                            console.log('3');
+                            // if (prevStave.width + prevStave.x + tmpNotes.length*50 > width) {
+                            //     tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, width - (prevStave.width + prevStave.x) - 5);
+                            // } else {
+                                tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*noteWidth);
+                            // }
+                        } else {
+                            tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*50);
+                        }
                         tmpStave.setContext(context).draw();
                         VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
                         prevStave = tmpStave;
@@ -87,11 +118,22 @@ export default class Score extends Component {
                 } else {                 
                     if (idx === notes.length - 1) {
                         var lastStave = this.checkNotes(tmpNotes);
-                        console.log('laststave', lastStave);
                         if (isFisrt) {
-                            VF.Formatter.FormatAndDraw(context, stave, lastStave.notes);
+                            tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50);
+                            tmpStave.addClef('treble').addTimeSignature('4/4');
+                            tmpStave.setContext(context).draw();
+                            VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes);
                         } else {
-                            var tmpStave = new VF.Stave(prevStave.width + prevStave.x, 0, lastStave.notes.length*50);
+                            if (prevStave.x + prevStave.width + lastStave.notes.length*50 > 0.9*svgContainer.getBoundingClientRect().width) {
+                                console.log('come here');
+                                staveX = 10;
+                                staveY += 100;
+                                tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50).addClef('treble').addTimeSignature('4/4');
+                            } else {
+                                console.log('4');
+                                tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, lastStave.notes.length*50);
+                                console.log(prevStave.x + prevStave.width + lastStave.notes.length*50);
+                            }
                             tmpStave.setContext(context).draw();
                             VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes);
                         }
@@ -113,14 +155,7 @@ export default class Score extends Component {
             // height:'1000px',
         };
         const centerStyle = { display: 'flex',  justifyContent:'center', alignItems:'center', marginTop: '20px' };
-        const rightStyle = { display: 'flex',  justifyContent:'right' };
-        // return <div ref="outer" style={{
-        //     border: "2px blue solid",
-        //     padding: 10,
-        //     borderRadius: 10,
-        //     display: "inline-block",
-        // }}>
-        // </div>;
+        const rightStyle = { display: 'flex',  marginLeft:'1000px' };
         return (
             <div style={divStyle}>
                 <h5 style={centerStyle}>Title</h5>

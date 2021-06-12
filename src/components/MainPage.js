@@ -22,7 +22,6 @@ export default class MainPage extends React.Component {
     }
     onClickNote(noteType) {
         const notes = this.state.notes.slice();
-        console.log('notes', notes);
         var note = {
             note: this.state.curNote,
         };
@@ -42,7 +41,6 @@ export default class MainPage extends React.Component {
         this.setState({
             notes: notes.concat(note)
         });
-        console.log('note', note.note, note.duration);
     }
 
     onDeleteNote() {
