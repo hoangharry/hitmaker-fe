@@ -10,6 +10,7 @@ export default class Toolbar extends Component {
             note: 'C/4'
         };
         this.handleOnChangeNote = this.handleOnChangeNote.bind(this);
+        this.handleOnChangeClef = this.handleOnChangeClef.bind(this);
     }
 
     componentDidMount() {
@@ -20,9 +21,13 @@ export default class Toolbar extends Component {
         this.props.onChangeNote(e);
     }
 
+    handleOnChangeClef(e) {
+        this.props.onChangeClef(e)
+    }
 
     render() {
         const noteRange = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
+        const allClef = ['treble', 'alto', 'bass'];
         const divStyle = {
             margin: '0',
             // padding: '0',
@@ -62,6 +67,13 @@ export default class Toolbar extends Component {
                 <select name="mode" id="name">
                     <option selected>Note</option>
                     <option disabled>Chord</option>
+                </select>
+                <hr></hr>
+                <label htmlFor="clef">Key Clef</label>
+                <select name="clef" id="clef" onChange={(e) => this.handleOnChangeClef(e.target.value)}>
+                    { allClef.map((v, idx) => {
+                            return <option key={idx}>{v}</option>
+                    })}
                 </select>
                 <hr></hr>
                 <label htmlFor="note">Note</label>

@@ -8,8 +8,8 @@ export default class MainPage extends React.Component {
         this.state = {
             notes: [],
             curNote: '',
-            timeSignature: '4/4'
-
+            timeSignature: '4/4',
+            curClef: 'treble',
         };
         this.onClickNote = this.onClickNote.bind(this);
         this.onChangeNote = this.onChangeNote.bind(this);
@@ -19,11 +19,14 @@ export default class MainPage extends React.Component {
         this.onPause = this.onPause.bind(this);
         this.onAddNew = this.onAddNew.bind(this);
         this.onDownload = this.onDownload.bind(this);
+        this.onChangeClef = this.onChangeClef.bind(this);
     }
+
     onClickNote(noteType) {
         const notes = this.state.notes.slice();
         var note = {
             note: this.state.curNote,
+            clef: this.state.curClef,
         };
         if (noteType === 'semibreve') {
             note.duration = 'w'; 
@@ -78,7 +81,13 @@ export default class MainPage extends React.Component {
         this.setState({
             curNote: note
         })
-    }    
+    }
+
+    onChangeClef(clef) {
+        this.setState({
+            curClef: clef
+        })
+    }
 
     onAddNew() {
 
@@ -128,9 +137,12 @@ export default class MainPage extends React.Component {
                     onAddNew={this.onAddNew}
                     onPlay={this.onPlay}
                     onPause={this.onPause}
-                    onDownload={this.onDownload}                    
+                    onDownload={this.onDownload}  
+                    onChangeClef={this.onChangeClef}                  
                 />
-                <Score notes={this.state.notes}/>
+                <Score notes={this.state.notes}
+                    onDeleteNote={this.onDeleteNote}
+                />
             </>
         )
     }
