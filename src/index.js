@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MainPage from './components/MainPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Score from './components/Score';
+import { SongInfoContextProvider } from './context/SongInfoContext';
+
+import App from './App'
 
 ReactDOM.render(
   <React.StrictMode>
-    <MainPage />
+    <SongInfoContextProvider>
+      <App />
+    </SongInfoContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

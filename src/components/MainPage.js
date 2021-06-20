@@ -1,6 +1,6 @@
 import React from 'react';
 import Toolbar from './Toolbar';
-import Score from './Score';
+import {Score} from './Score';
 
 export default class MainPage extends React.Component {
     constructor(props) {

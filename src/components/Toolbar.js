@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PlayButton, AddButton, PauseButton,
         GenerateButton, DownloadButton, BackspaceButton, SemibreveBtn, MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn } from './Buttons';
-import { ButtonGroup, ButtonToolbar, Badge } from 'react-bootstrap'
+import { ButtonGroup, ButtonToolbar, Badge, Form } from 'react-bootstrap'
 
 export default class Toolbar extends Component {
     constructor(props) {
@@ -27,12 +27,11 @@ export default class Toolbar extends Component {
 
     render() {
         const noteRange = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
-        const allClef = ['treble', 'alto', 'bass'];
         const divStyle = {
             margin: '0',
             // padding: '0',
             width: '20%',
-            backgroundColor:'#999999',
+            backgroundColor:'#adac9c',
             position: 'fixed',
             height: '100%',
             overflow: 'auto',
@@ -45,7 +44,9 @@ export default class Toolbar extends Component {
                 <ButtonToolbar style={centerStyle}>
                 <ButtonGroup>
                     <AddButton onAddNew={this.props.onAddNew}/>{' '}
-                    <BackspaceButton onDeleteNote={this.props.onDeleteNote}/>
+                    <DownloadButton onDownload={this.props.onDownload}/>
+                    <GenerateButton onGenerate={this.props.onGenerate}/>{' '}
+                    
                 </ButtonGroup>
                 </ButtonToolbar>
                 <hr></hr>
@@ -53,53 +54,46 @@ export default class Toolbar extends Component {
                 <ButtonGroup>
                     <PlayButton onPlay={this.props.onPlay}/>{' '}
                     <PauseButton onPause={this.props.onPause}/>
+                    <BackspaceButton onDeleteNote={this.props.onDeleteNote}/>
                 </ButtonGroup>
                 </ButtonToolbar>
                 <hr></hr>
-                <ButtonToolbar style={centerStyle}>                
-                <ButtonGroup>
-                    <GenerateButton onGenerate={this.props.onGenerate}/>{' '}
-                    <DownloadButton onDownload={this.props.onDownload}/>
-                </ButtonGroup>                    
-                </ButtonToolbar>
-                <hr></hr>
-                <label htmlFor="mode">Choose mode input</label>
-                <select name="mode" id="name">
-                    <option selected>Note</option>
-                    <option disabled>Chord</option>
-                </select>
-                <hr></hr>
-                <label htmlFor="clef">Key Clef</label>
-                <select name="clef" id="clef" onChange={(e) => this.handleOnChangeClef(e.target.value)}>
-                    { allClef.map((v, idx) => {
-                            return <option key={idx}>{v}</option>
-                    })}
-                </select>
-                <hr></hr>
-                <label htmlFor="note">Note</label>
-                <select name="note" id="note" onChange={(e) => this.handleOnChangeNote(e.target.value)}>
-                    { noteRange.map((v, idx) => {
+                <Form style={{margin: '15px'}}>
+                    <Form.Group controlId="selectMode">
+                        <Form.Label>Mode input</Form.Label>
+                        <Form.Control as="select" custom>
+                        <option>Note</option>
+                        <option disabled>Chord</option>
+                        </Form.Control>
+
+                        <Form.Label>Key Clef</Form.Label>
+                        <Form.Control as="select" custom onChange={(e) => this.handleOnChangeClef(e.target.value)}>
+                            <option value='treble'>Treble</option>
+                            <option value='alto'>Alto</option>
+                            <option value='bass'>Bass</option>
+                        </Form.Control>
+                        
+                        <Form.Label>Note</Form.Label>
+                        <Form.Control as="select" custom onChange={(e) => this.handleOnChangeNote(e.target.value)}>
+                        { noteRange.map((v, idx) => {
                         return <option key={idx}>{v}</option>
-                    })}
-                </select>
+                        })}
+                        </Form.Control>
+                    </Form.Group>
+                </Form>
                 <hr></hr>
                 <ButtonToolbar style={centerStyle}>
                 <ButtonGroup>
-                    {/* <SemibreveBtn onClickSemibreve={() => this.handleNoteSemibreve()}/>{' '} */}
                     <SemibreveBtn onClickNote={this.props.onClickNote}/>{' '}
-                    <MinimBtn onClickNote={this.props.onClickNote}/>
-                </ButtonGroup>
-                </ButtonToolbar>
-                <hr></hr>
-                <ButtonToolbar style={centerStyle}>
-                <ButtonGroup>
-                    <CrotchetBtn onClickNote={this.props.onClickNote}/>{' '}
+                    <MinimBtn onClickNote={this.props.onClickNote}/>{' '}
                     <QuaverBtn onClickNote={this.props.onClickNote}/>
                 </ButtonGroup>
                 </ButtonToolbar>
+                
                 <hr></hr>
                 <ButtonToolbar style={centerStyle}>                
                 <ButtonGroup>
+                    <CrotchetBtn onClickNote={this.props.onClickNote}/>{' '}
                     <SemiQuaverBtn onClickNote={this.props.onClickNote}/>{' '}
                     <DemisemiQuaverBtn onClickNote={this.props.onClickNote}/>
                 </ButtonGroup>                    
