@@ -1,15 +1,19 @@
 import React from 'react';
 import Toolbar from './Toolbar';
 import {Score} from './Score';
+import { TopNavbar } from './About';
 
 export default class MainPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            notes: [],
+            notes: [[], []],
             curNote: '',
             timeSignature: '4/4',
-            curClef: 'treble',
+            curClef: ['treble', 'treble'],
+            firstClef: ['treble', 'treble'],
+            stave: 0,
+
         };
         this.onClickNote = this.onClickNote.bind(this);
         this.onChangeNote = this.onChangeNote.bind(this);
@@ -20,13 +24,14 @@ export default class MainPage extends React.Component {
         this.onAddNew = this.onAddNew.bind(this);
         this.onDownload = this.onDownload.bind(this);
         this.onChangeClef = this.onChangeClef.bind(this);
+        this.onChangeStave = this.onChangeStave.bind(this);
     }
 
     onClickNote(noteType) {
-        const notes = this.state.notes.slice();
+        let notes = this.state.notes[this.state.stave].slice();
         var note = {
             note: this.state.curNote,
-            clef: this.state.curClef,
+            clef: this.state.curClef[this.state.stave],
         };
         if (noteType === 'semibreve') {
             note.duration = 'w'; 
@@ -41,16 +46,33 @@ export default class MainPage extends React.Component {
         } else if (noteType === 'demisemiquaver') {
             note.duration = '32';
         }
-        this.setState({
-            notes: notes.concat(note)
-        });
+        notes = notes.concat(note);
+        if (this.state.stave === 0) {
+            const notesOther = this.state.notes[1].slice();
+            this.setState({
+                notes: [notes, notesOther]
+            })
+        } else {
+            const notesOther = this.state.notes[0].slice();
+            this.setState({
+                notes: [notesOther, notes]
+            });
+        }
     }
 
     onDeleteNote() {
-        const notes = this.state.notes.slice(0, this.state.notes.length - 1);
-        this.setState({
-            notes: notes
-        });
+        const notes = this.state.notes[this.state.stave].slice(0, this.state.notes[this.state.stave].length - 1);
+        if (this.state.stave === 0) {
+            const notesOther = this.state.notes[1].slice();
+            this.setState({
+                notes: [notes, notesOther]
+            });
+        } else {
+            const notesOther = this.state.notes[0].slice();
+            this.setState({
+                notes: [notesOther, notes]
+            });
+        }
     }
 
     onGenerate() {
@@ -77,6 +99,12 @@ export default class MainPage extends React.Component {
             })
     }
 
+    onChangeStave(stave) {
+        this.setState({
+            stave: stave
+        });
+    }
+
     onChangeNote(note) {
         this.setState({
             curNote: note
@@ -84,13 +112,36 @@ export default class MainPage extends React.Component {
     }
 
     onChangeClef(clef) {
-        this.setState({
-            curClef: clef
-        })
+        if (this.state.notes[this.state.stave].length === 0) {
+            if (this.state.stave === 0) {
+                const otherClef = this.state.firstClef[1];
+                this.setState({
+                    firstClef: [clef, otherClef]
+                });
+            } else {
+                const otherClef = this.state.firstClef[0];
+                this.setState({
+                    firstClef: [otherClef, clef]
+                });
+            }
+        } else {
+            if (this.state.stave === 0) {
+                const otherClef = this.state.curClef[1];
+                this.setState({
+                    curClef: [clef, otherClef]
+                });
+            } else {
+                const otherClef = this.state.curClef[0];
+                this.setState({
+                    curClef: [otherClef, clef]
+                });
+            }
+        }
     }
 
-    onAddNew() {
 
+    onAddNew() {
+        window.open();
     }
 
     onDownload() {
@@ -128,7 +179,8 @@ export default class MainPage extends React.Component {
 
     render() {
         return (
-            <>
+            <>  
+                <TopNavbar/>
                 <Toolbar
                     onClickNote={this.onClickNote}
                     onChangeNote={this.onChangeNote}
@@ -138,10 +190,12 @@ export default class MainPage extends React.Component {
                     onPlay={this.onPlay}
                     onPause={this.onPause}
                     onDownload={this.onDownload}  
-                    onChangeClef={this.onChangeClef}                  
+                    onChangeClef={this.onChangeClef} 
+                    onChangeStave={this.onChangeStave}                 
                 />
                 <Score notes={this.state.notes}
                     onDeleteNote={this.onDeleteNote}
+                    firstClef={this.state.firstClef}
                 />
             </>
         )

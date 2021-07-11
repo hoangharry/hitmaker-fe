@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { PlayButton, AddButton, PauseButton,
         GenerateButton, DownloadButton, BackspaceButton, SemibreveBtn, MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn } from './Buttons';
-import { ButtonGroup, ButtonToolbar, Badge, Form } from 'react-bootstrap'
+import { ButtonGroup, ButtonToolbar, Form } from 'react-bootstrap'
 
 export default class Toolbar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            note: 'C/4'
+            note: 'C/2'
         };
         this.handleOnChangeNote = this.handleOnChangeNote.bind(this);
         this.handleOnChangeClef = this.handleOnChangeClef.bind(this);
+        this.handleOnChangeStave = this.handleOnChangeStave.bind(this);
     }
 
     componentDidMount() {
@@ -22,11 +23,16 @@ export default class Toolbar extends Component {
     }
 
     handleOnChangeClef(e) {
-        this.props.onChangeClef(e)
+        this.props.onChangeClef(e);
+    }
+
+    handleOnChangeStave(e) {
+        this.props.onChangeStave(Number(e));
     }
 
     render() {
-        const noteRange = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
+        const noteRange = ['C/2', 'D/2', 'E/2', 'F/2', 'G/2', 'A/2', 'B/2', 'C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3',
+            'C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
         const divStyle = {
             margin: '0',
             // padding: '0',
@@ -36,11 +42,9 @@ export default class Toolbar extends Component {
             height: '100%',
             overflow: 'auto',
         };
-        const centerStyle = { display: 'flex',  justifyContent:'center', alignItems:'center' };
+        const centerStyle = { display: 'flex',  justifyContent:'center', alignItems:'center', marginTop: '5px' };
         return (
             <div style={divStyle}>
-                <Badge variant="warning" style={centerStyle}><h2>HIT MAKER</h2></Badge>
-                <hr></hr>
                 <ButtonToolbar style={centerStyle}>
                 <ButtonGroup>
                     <AddButton onAddNew={this.props.onAddNew}/>{' '}
@@ -64,6 +68,12 @@ export default class Toolbar extends Component {
                         <Form.Control as="select" custom>
                         <option>Note</option>
                         <option disabled>Chord</option>
+                        </Form.Control>
+
+                        <Form.Label>Stave</Form.Label>
+                        <Form.Control as="select" custom onChange={(e) => this.handleOnChangeStave(e.target.value)}>
+                            <option value='0'>1</option>
+                            <option value='1'>2</option>
                         </Form.Control>
 
                         <Form.Label>Key Clef</Form.Label>

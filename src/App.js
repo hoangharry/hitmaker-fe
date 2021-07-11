@@ -6,6 +6,9 @@ import { useContext } from 'react';
 import { InitDialog } from './components/Dialog'
 import MainPage from './components/MainPage'
 import { About } from './components/About'
+import { SignUp } from './components/Signup';
+import { Login } from './components/Login';
+import { UserPage } from './components/UserPage';
 
 function App() {
   const { input } = useContext(SongInfoContext)
@@ -19,6 +22,15 @@ function App() {
           </Route>
           <Route path='/about'>
             <About/>
+          </Route>
+          <Route path='/signup'>
+            <SignUp/>
+          </Route>
+          <Route path='/login'>
+            <Login/>
+          </Route>
+          <Route path='/user'>
+            <UserPage/>
           </Route>
         </Switch>
       </BrowserRouter>
