@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { TopNavbar } from "./About";
+import { login } from "../service/auth.service";
+import { useHistory } from "react-router-dom";
 
 export function Login() {
+    const history = useHistory();
     const [userName, setUserName] = useState('');
     const [pwd, setPwd] = useState('');
     const [err, setErr] = useState('');
+
     const handleOnCLick = () => {
         if (userName === '') {
             setErr('usr');
@@ -15,20 +19,21 @@ export function Login() {
             setErr('pwd');
             return;
         }
-
+        login(userName, pwd).then(
+            () => {
+                history.push('/user');
+            },
+            (error) => {
+                setErr('cannotlogin');
+            }
+        )
     }
 
     const checkUserName = (usr) => {
-        if (usr.length === 0) {
-            setErr('usr');
-        }
         setUserName(usr);
     }
 
     const checkPwd = (pwd) => {
-        if (pwd.length === 0) {
-            setErr('pwd');
-        }
         setPwd(pwd);
     }
 
@@ -58,6 +63,12 @@ export function Login() {
                 </Form.Text>
             }
         </Form.Group>
+        {
+            err === 'cannotlogin' &&
+            <Form.Text className="text-muted">
+                    Username or password is invalid
+            </Form.Text>
+        }
         <Button variant="primary" type="submit" onClick={() => handleOnCLick()}>
             Login
         </Button>

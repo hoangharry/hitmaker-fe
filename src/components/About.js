@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { useContext } from 'react';
 import { SongInfoContext } from '../context/SongInfoContext';
+import { logout } from '../service/auth.service';
 
 export function About() {
     const history = useHistory();
@@ -24,8 +25,8 @@ export function TopNavbar() {
     let navlinks;
     if (isLogin) {
         navlinks = <Nav>
-            <Nav.Link>username</Nav.Link>
-            <Nav.Link>Log out</Nav.Link>
+            <Nav.Link onClick ={() => history.push('/user')}>username</Nav.Link>
+            <Nav.Link onClick ={() => logout()}>Log out</Nav.Link>
         </Nav>
     } else {
         navlinks = <Nav>

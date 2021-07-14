@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { CardDeck, Card, Button } from "react-bootstrap";
 import { TopNavbar } from "./About";
+import { getSavedSongs } from '../service/user.service'
+import { useHistory } from "react-router-dom";
 
 export function UserPage() {
+    const history = useHistory();
     const [songs, setSongs] = useState([]);
-    const getSavedSongs = () => {
-        return [{time: 9, name: 'a'}, {time: 10, name: 'hitit'}, {time: 1, name: 'a'}, {time: 2, name: 'wwww'}, {time: 2, name: 'wwww'}, {time: 2, name: 'awwww'}]
-    }
+    // const getSavedSongs = () => {
+    //     return [{time: 9, name: 'a'}, {time: 10, name: 'hitit'}, {time: 1, name: 'a'}, {time: 2, name: 'wwww'}, {time: 2, name: 'wwww'}, {time: 2, name: 'awwww'}]
+    // }
+
     useEffect(() => {
-        setSongs(getSavedSongs());
+        setSongs(getSavedSongs('hhhh'));
     }, [])
     
     
@@ -44,6 +48,7 @@ export function UserPage() {
     return (
         <>
             <TopNavbar/>
+            <Button onClick={() => history.push('/')}>Create new song</Button>
             {cardDeckArr.map((v) => {return v;})}
         </>
     );
