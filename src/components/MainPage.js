@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Toolbar from './Toolbar';
 import {Score} from './Score';
 import { TopNavbar } from './About';
@@ -9,19 +9,16 @@ export default class MainPage extends React.Component {
         this.state = {
             notes: [[], []],
             curNote: '',
-            timeSignature: '4/4',
-            curClef: ['treble', 'treble'],
-            firstClef: ['treble', 'treble'],
+            curClef: ['treble', 'alto'],
+            firstClef: ['treble', 'alto'],
             stave: 0,
+            keySignature: 'C'
 
         };
         this.onClickNote = this.onClickNote.bind(this);
         this.onChangeNote = this.onChangeNote.bind(this);
         this.onDeleteNote = this.onDeleteNote.bind(this);
         this.onGenerate = this.onGenerate.bind(this);
-        this.onPlay = this.onPlay.bind(this);
-        this.onPause = this.onPause.bind(this);
-        this.onAddNew = this.onAddNew.bind(this);
         this.onDownload = this.onDownload.bind(this);
         this.onChangeClef = this.onChangeClef.bind(this);
         this.onChangeStave = this.onChangeStave.bind(this);
@@ -34,17 +31,17 @@ export default class MainPage extends React.Component {
             clef: this.state.curClef[this.state.stave],
         };
         if (noteType === 'semibreve') {
-            note.duration = 'w'; 
+            note.dur = 32; 
         } else if (noteType === 'minim') {
-            note.duration = 'h';
+            note.dur = 16;
         } else if (noteType === 'quaver') {
-            note.duration = 'q';
+            note.dur = 8;
         } else if (noteType === 'crotchet') {
-            note.duration = '8';
+            note.dur = 4;
         } else if (noteType === 'semiquaver') {
-            note.duration = '16';
+            note.dur = 2;
         } else if (noteType === 'demisemiquaver') {
-            note.duration = '32';
+            note.dur = 1;
         }
         notes = notes.concat(note);
         if (this.state.stave === 0) {
@@ -76,27 +73,13 @@ export default class MainPage extends React.Component {
     }
 
     onGenerate() {
-        const reqOptions = {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                timeSignature: this.state.timeSignature,
-                secondParam: this.state.notes
-            })
-        };
-        fetch('https://ahihi/generate', reqOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                this.setState({
-                    notes: data.streamParts
-                })
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+        
+    }
+
+    onChangeKeySn(keysn) {
+        this.setState({
+            keySignature: keysn
+        })
     }
 
     onChangeStave(stave) {
@@ -139,42 +122,7 @@ export default class MainPage extends React.Component {
         }
     }
 
-
-    onAddNew() {
-        window.open();
-    }
-
     onDownload() {
-        const reqOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/octet-stream',
-                'Content-Disposition': 'attachment; filename="picture.png'
-            },
-            body: JSON.stringify({
-                saveName: 'abc',
-                timeSignature: this.state.timeSignature,
-                secondParam: this.state.notes
-            })
-        };
-        fetch('https://ahihi/generate', reqOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                this.setState({
-                    notes: data.streamParts
-                })
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }
-
-    onPlay() {
-
-    }
-    
-    onPause() {
-
     }
 
     render() {
@@ -186,9 +134,6 @@ export default class MainPage extends React.Component {
                     onChangeNote={this.onChangeNote}
                     onDeleteNote={this.onDeleteNote}
                     onGenerate={this.onGenerate}
-                    onAddNew={this.onAddNew}
-                    onPlay={this.onPlay}
-                    onPause={this.onPause}
                     onDownload={this.onDownload}  
                     onChangeClef={this.onChangeClef} 
                     onChangeStave={this.onChangeStave}                 
@@ -196,6 +141,7 @@ export default class MainPage extends React.Component {
                 <Score notes={this.state.notes}
                     onDeleteNote={this.onDeleteNote}
                     firstClef={this.state.firstClef}
+                    timeSignature={this.state.timeSignature}
                 />
             </>
         )

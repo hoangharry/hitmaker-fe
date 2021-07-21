@@ -7,13 +7,17 @@ import { logout } from '../service/auth.service';
 
 export function About() {
     const history = useHistory();
+    const { nameUsr } = useContext(SongInfoContext);
     return (
         <>
         <TopNavbar/>
         <h5>This is about page</h5>
-        <Button onClick={() => history.push('/')}>
-            Create new song
-        </Button>
+        {
+            nameUsr !== '' ?
+            <Button onClick={() => history.push('/init')} style={{margin: '10px'}}>
+                Create new song
+            </Button> : null
+        }
         
         </>
     )
@@ -21,18 +25,25 @@ export function About() {
 
 export function TopNavbar() {
     const history = useHistory();
-    const { isLogin } = useContext(SongInfoContext);
+    const { nameUsr, handleNameUsr, handleSong } = useContext(SongInfoContext);
+    console.log('nameusr', nameUsr);
     let navlinks;
-    if (isLogin) {
+    const onLogout = () => {
+        handleNameUsr('');
+        handleSong([]);
+        logout();
+    } 
+    if (nameUsr !== '') {
         navlinks = <Nav>
-            <Nav.Link onClick ={() => history.push('/user')}>username</Nav.Link>
-            <Nav.Link onClick ={() => logout()}>Log out</Nav.Link>
+            <Nav.Link onClick ={() => history.push('/user')}>{nameUsr}</Nav.Link>
+            <Nav.Link onClick ={() => onLogout()}>Log out</Nav.Link>
+            <Nav.Link onClick ={() => history.push('/')}>About</Nav.Link>
         </Nav>
     } else {
         navlinks = <Nav>
-            <Nav.Link onClick={() => history.push("/")}>Use as guest</Nav.Link>
             <Nav.Link onClick={() => history.push("/login")}>Log in</Nav.Link>
             <Nav.Link onClick={() => history.push("/signup")}>Sign up</Nav.Link>
+            <Nav.Link onClick={() => history.push('/')}>About</Nav.Link>
         </Nav>
     }
     return (

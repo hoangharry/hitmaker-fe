@@ -1,32 +1,25 @@
 import axios from "axios";
 
-const API_URL = 'https:://';
+const API_URL = 'http://127.0.0.1:4000/';
 
 export const register = (usrname, pwd, name) => {
+    console.log('url', API_URL);
     return axios.post(API_URL + 'signup', {
-        usrname,
-        pwd,
-        name,
+        username: usrname,
+        password: pwd,
+        name: name,
     });
 };
 
 export const login = (usrname, pwd) => {
     return axios.post(API_URL + 'login', {
-        usrname,
-        pwd,
-    }).then((response) =>{
-        if (response.data.accessToken) {
-            localStorage.setItem('user', JSON.stringify(response.data));
-        }
-
-        return response.data;
+        username: usrname,
+        password: pwd,
     });
 };
 
 export const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('token');
 }
 
-export const getCurUser = () => {
-    return JSON.parse(localStorage.getItem('user'));
-};
+

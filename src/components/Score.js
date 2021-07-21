@@ -2,27 +2,32 @@ import Vex from 'vexflow';
 import React, { useContext, useEffect, useState} from 'react';
 import {ExceedNotesDialog} from './Dialog';
 import { SongInfoContext } from '../context/SongInfoContext';
+import { useHistory } from 'react-router-dom';
 
 export function Score(props) {
     const VF = Vex.Flow;
     const [showModal, setShowModal] = useState(false);
     let mapDuration = new Map();
-    mapDuration.set("w", 32);
-    mapDuration.set("h", 16);
-    mapDuration.set("q", 8);
-    mapDuration.set("8", 4);
-    mapDuration.set("16", 2);
-    mapDuration.set("32", 1);
+    mapDuration.set(32, "w");
+    mapDuration.set(16, "h");
+    mapDuration.set(8, "q");
+    mapDuration.set(4, "8");
+    mapDuration.set(2, "16");
+    mapDuration.set(1, "32");
+    mapDuration.set(24, "2d");
+    mapDuration.set(12, "4d");
+    mapDuration.set(3, "16d");
+    mapDuration.set(6, "8d")
+    const { song } = useContext(SongInfoContext)
 
-    const { input } = useContext(SongInfoContext);
     let beatsPerBar = 0;
-    if (input.timeSignature === '4/4') {
+    if (song[0].timeSignature === '4/4') {
         beatsPerBar = 32;
     }
-    if (input.timeSignature === '3/4') {
+    if (song[0].timeSignature === '3/4') {
         beatsPerBar = 24;
     }
-    if (input.timeSignature === '2/4') {
+    if (song[0].timeSignature === '2/4') {
         beatsPerBar = 16;
     }
 
@@ -30,7 +35,7 @@ export function Score(props) {
         let numNotesAdd = 0;
         let sumDuration = 0;
         notes.forEach((e) => {
-            sumDuration += mapDuration.get(e.duration);
+            sumDuration += e.dur;
         });
         if (sumDuration % beatsPerBar === 0) {
         } else {
@@ -41,7 +46,7 @@ export function Score(props) {
                     continue;
                 } else {
                     numNotesAdd += quotient;
-                    let duration = [...mapDuration.entries()].find(([k, v]) => v === i)[0];
+                    let duration = [...mapDuration.entries()].find(([k, v]) => k === i)[1];
                     for (let j = 0; j < quotient; j++) {
                         notes.push(new VF.StaveNote({keys: ["D/4"], duration: duration}));
                     }
@@ -55,6 +60,30 @@ export function Score(props) {
         return {notes, numNotesAdd};
     }
 
+    const addKeySn = (keySn) => {
+        const mapKey = new Map();
+        mapKey.set('C', '');
+        mapKey.set('G', '#');
+        mapKey.set('D', '##');
+        mapKey.set('A', '###');
+        mapKey.set('E', '####');
+        mapKey.set('B', '#####');
+        mapKey.set('F#', '######');
+        mapKey.set('C#', '#######');
+        mapKey.set('F', 'b');
+        mapKey.set('B-', 'bb');
+        mapKey.set('E-', 'bbb');
+        mapKey.set('A-', 'bbbb');
+        mapKey.set('D-', 'bbbbb');
+        mapKey.set('G-', 'bbbbbb');
+        mapKey.set('C-', 'bbbbbbb');
+
+
+    }
+    const notesTreble = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6'];
+    const notesAlto = ['C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3', 'C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5'];
+    const notesBass = ['C/2', 'D/2', 'E/2', 'F/2', 'G/2', 'A/2', 'B/2', 'C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3', 'C/4'];
+
     const drawNotes = (staveN, context, svgContainer, props) => {
         const width = svgContainer.getBoundingClientRect().width;
         const notes = props.notes[staveN];
@@ -66,7 +95,7 @@ export function Score(props) {
             } else {
                 stave = new VF.Stave(10, 0, width);
             }
-            stave.addClef(props.firstClef[staveN]).addTimeSignature(input.timeSignature);
+            stave.addClef(props.firstClef[staveN]).addTimeSignature(song[0].timeSignature);
             stave.setContext(context).draw();
         } else {
             console.log('notes', notes);
@@ -79,12 +108,62 @@ export function Score(props) {
             var tmpNotes = [];
             var isFisrt = true;
             notes.forEach((v, idx) => {
-                tmpduration += mapDuration.get(v.duration);
-                if (v.clef !== curClef) {
-                    tmpNotes.push(new VF.ClefNote(v.clef));
-                    curClef = v.clef
+                if (v.note) {
+                    tmpduration += v.dur;
+                    let tmpClefNotes;
+                    if (curClef === 'treble') {
+                        tmpClefNotes = notesTreble;
+                    } else if (curClef === 'alto') {
+                        tmpClefNotes = notesAlto;
+                    } else {
+                        tmpClefNotes = notesBass
+                    }
+                    if (!tmpClefNotes.includes(v.note)) {
+                        if (notesTreble.includes(v.note)) {
+                            tmpNotes.push(new VF.ClefNote('treble'));
+                            curClef = 'treble';
+                        } else if (notesAlto.includes(v.note)) {
+                            tmpNotes.push(new VF.ClefNote('alto'));
+                            curClef = 'alto';
+                        } else {
+                            tmpNotes.push(new VF.ClefNote('bass'));
+                            curClef = 'bass';
+                        }
+                    }
+                    if (mapDuration.get(v.dur).includes('d')) {
+                        tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(v.dur), auto_stem: true}).addDotToAll());
+                    } else {
+                        tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(v.dur), auto_stem: true}));
+                    }
+                } else {
+                    tmpduration += v.dur;
+                    let tmpClefNotes;
+                    if (curClef === 'treble') {
+                        tmpClefNotes = notesTreble;
+                    } else if (curClef === 'alto') {
+                        tmpClefNotes = notesAlto;
+                    } else {
+                        tmpClefNotes = notesBass
+                    }
+                    if (!tmpClefNotes.includes(v.chord[0])) {
+                        if (notesTreble.includes(v.chord[0])) {
+                            tmpNotes.push(new VF.ClefNote('treble'));
+                            curClef = 'treble';
+                        } else if (notesAlto.includes(v.chord[0])) {
+                            tmpNotes.push(new VF.ClefNote('alto'));
+                            curClef = 'alto';
+                        } else {
+                            tmpNotes.push(new VF.ClefNote('bass'));
+                            curClef = 'bass';
+                        }
+                    }
+                    if (mapDuration.get(v.dur).includes('d')) {
+                        tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(v.dur), auto_stem: true}).addDotToAll());
+                    } else {
+                        tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(v.dur), auto_stem: true}));
+                    }
                 }
-                tmpNotes.push(new VF.StaveNote({ clef: v.clef, keys: [v.note], duration: v.duration, auto_stem: true}));
+                
                 var tmpStave;
                 if (tmpduration > beatsPerBar) {
                     setShowModal(true);
@@ -93,7 +172,7 @@ export function Score(props) {
                 if (tmpduration === beatsPerBar) {
                     if (isFisrt) {
                         tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50);
-                        tmpStave.addClef(props.firstClef[staveN]).addTimeSignature(input.timeSignature);
+                        tmpStave.addClef(props.firstClef[staveN]).addTimeSignature(song[0].timeSignature);
                         tmpStave.setContext(context).draw();
                         VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
                         prevStave = tmpStave;
@@ -103,7 +182,7 @@ export function Score(props) {
                         if (noteWidth < 20) {
                             staveX = 10;
                             staveY += 200;
-                            tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50).addClef(curClef).addTimeSignature(input.timeSignature);
+                            tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50).addClef(curClef).addTimeSignature(song[0].timeSignature);
                         } else if (noteWidth < 50) {
                             tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*noteWidth);
                         } else {
@@ -122,7 +201,7 @@ export function Score(props) {
                         var lastStave = checkNotes(tmpNotes);
                         if (isFisrt) {
                             tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50);
-                            tmpStave.addClef(curClef).addTimeSignature(input.timeSignature);
+                            tmpStave.addClef(props.firstClef[staveN]).addTimeSignature(song[0].timeSignature);
                             tmpStave.setContext(context).draw();
                             VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes);
                         } else {
@@ -130,7 +209,7 @@ export function Score(props) {
                                 console.log('come here');
                                 staveX = 10;
                                 staveY += 200;
-                                tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50).addClef(curClef).addTimeSignature(input.timeSignature);
+                                tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50).addClef(curClef).addTimeSignature(song[0].timeSignature);
                             } else {
                                 console.log('4');
                                 tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, lastStave.notes.length*50);
@@ -233,87 +312,6 @@ export function Score(props) {
         console.log('notesProp', notesProp);
         drawNotes(0, context, svgContainer, props);
         drawNotes(1, context, svgContainer, props);
-        // if (notesProp[0].length === 0) {
-        //     var stave = new VF.Stave(10, 0, 300);
-        //     stave.addClef(props.firstClef).addTimeSignature(input.timeSignature);
-        //     stave.setContext(context).draw();
-        // } else {
-        //     let notes = notesProp;
-        //     console.log('notes', notes);
-        //     let curClef = props.firstClef;
-        //     let tmpduration = 0, staveX = 10, staveY = 0;
-        //     let prevStave;
-        //     var tmpNotes = [];
-        //     var isFisrt = true;
-        //     notes[0].forEach((v, idx) => {
-        //         tmpduration += mapDuration.get(v.duration);
-        //         if (v.clef !== curClef) {
-        //             tmpNotes.push(new VF.ClefNote(v.clef));
-        //             curClef = v.clef
-        //         }
-        //         tmpNotes.push(new VF.StaveNote({ clef: v.clef, keys: [v.note], duration: v.duration, auto_stem: true}));
-        //         var tmpStave;
-        //         if (tmpduration > beatsPerBar) {
-        //             setShowModal(true);
-        //             props.onDeleteNote();
-        //         }
-        //         if (tmpduration === beatsPerBar) {
-        //             if (isFisrt) {
-        //                 tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50);
-        //                 tmpStave.addClef(props.firstClef).addTimeSignature(input.timeSignature);
-        //                 tmpStave.setContext(context).draw();
-        //                 VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
-        //                 prevStave = tmpStave;
-        //                 isFisrt = false;
-        //             } else {
-        //                 const noteWidth = Math.trunc((width - (prevStave.x + prevStave.width) - 10)/tmpNotes.length);
-        //                 if (noteWidth < 20) {
-        //                     staveX = 10;
-        //                     staveY += 100;
-        //                     tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50).addClef(curClef).addTimeSignature(input.timeSignature);
-        //                 } else if (noteWidth < 50) {
-        //                     tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*noteWidth);
-        //                 } else {
-        //                     tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*50);
-        //                 }
-        //                 tmpStave.setContext(context).draw();
-        //                 VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes);
-        //                 prevStave = tmpStave;
-        //             }
-        //             tmpNotes = [];
-        //             tmpduration = 0;
-        //         } else {   
-        //             console.log('1');              
-        //             if (idx === notes[0].length - 1) {
-        //                 console.log('come here');
-        //                 var lastStave = checkNotes(tmpNotes);
-        //                 if (isFisrt) {
-        //                     tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50);
-        //                     tmpStave.addClef(curClef).addTimeSignature(input.timeSignature);
-        //                     tmpStave.setContext(context).draw();
-        //                     VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes);
-        //                 } else {
-        //                     if (prevStave.x + prevStave.width + lastStave.notes.length*50 > 0.9*svgContainer.getBoundingClientRect().width) {
-        //                         console.log('come here');
-        //                         staveX = 10;
-        //                         staveY += 100;
-        //                         tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50).addClef(curClef).addTimeSignature(input.timeSignature);
-        //                     } else {
-        //                         console.log('4');
-        //                         tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, lastStave.notes.length*50);
-        //                         console.log(prevStave.x + prevStave.width + lastStave.notes.length*50);
-        //                     }
-        //                     tmpStave.setContext(context).draw();
-        //                     VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes);
-        //                 }
-        //                 const vfNotes = document.getElementsByClassName("vf-stavenote");
-        //                 for (let i = 1; i <= lastStave.numNotesAdd; i++) {
-        //                     vfNotes[vfNotes.length - i].setAttribute("hidden", true);
-        //                 }
-        //             }                
-        //         }
-        //     });
-        // }
     })
 
     const divStyle = {
@@ -323,7 +321,6 @@ export function Score(props) {
         // height:'1000px',
     };
     const centerStyle = { display: 'flex',  justifyContent:'center', alignItems:'center', marginTop: '20px' };
-    const rightStyle = { display: 'flex',  marginLeft:'1000px' };
     return (
         <>
         <ExceedNotesDialog
@@ -331,8 +328,7 @@ export function Score(props) {
             onHide={() => setShowModal(false)}
         />
         <div style={divStyle}>
-            <h5 style={centerStyle}>{input.title}</h5>
-            <h6 style={rightStyle}>{input.author}</h6>
+            <h5 style={centerStyle}>{song[0].saveName}</h5>
             <div style={{width: 'auto'}} id="new-song"></div>
         </div>
         </>

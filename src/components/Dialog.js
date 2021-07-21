@@ -32,19 +32,21 @@ export const InitDialog = () => {
     const [timeSignature, setTimeSignature] = useState('4/4');
     const [isShow, setIsShow] = useState(true) 
     const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const { handleInput } = useContext(SongInfoContext);
+    const [err, setErr] = useState('');
+    const { handleSong } = useContext(SongInfoContext);
     const history = useHistory();
     const onHide = () => {
-      if (author === '' || title === '') {
+      if (title === '') {
+        setErr('title');
         return;
       }
-      handleInput(author, title, timeSignature);
+      handleSong([{keySignature: '', saveName: title, streamParts: [], timeSignature: timeSignature}]);
       setIsShow(false);
+      history.push('/song');
     }
     const onAboutClick = () => {
       setIsShow(false);
-      history.push('/about');
+      history.push('/');
     }
     
     return (
@@ -65,11 +67,12 @@ export const InitDialog = () => {
                 <Form.Label>Title</Form.Label>
                 <Form.Control type="text" placeholder="Enter title of your song" onChange={(e) => setTitle(e.target.value)}></Form.Control> 
             </Form.Group>
-
-            <Form.Group className="mb-3" controlId="authorId">
-            <Form.Label>Author</Form.Label>
-                <Form.Control type="text" placeholder="Enter your name" onChange={(e) => setAuthor(e.target.value)}></Form.Control>
-            </Form.Group>
+            {
+                err === 'title' &&
+                <Form.Text className="text-muted">
+                    Please enter title of song
+                </Form.Text>
+            }
 
             <Form.Group className="mb-3" controlId="timeSnId">
             <Form.Label>TimeSignature</Form.Label>

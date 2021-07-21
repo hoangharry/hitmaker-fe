@@ -2,10 +2,19 @@ import axios from "axios";
 
 import authHeader from "./auth-header";
 
-const API_URL = '';
+const API_URL = 'http://127.0.0.1:4000/';
 
-export const getSavedSongs = (usr) => {
-    const data = { username: usr};
-    return axios.get(API_URL + 'songs', { headers: authHeader(), params: data})
+export const generateSong = (timeSignature, keySignature, streamParts) => {
+    const data = { timeSignature, keySignature, streamParts};
+    return axios.post(API_URL + 'generate', { headers: authHeader(), params: data});
+}
+
+export const saveSong = (timeSignature, keySignature, streamParts) => {
+    const data = { timeSignature, keySignature, streamParts};
+    return axios.post(API_URL + 'save', { headers: authHeader(), params: data});
+}
+
+export const downloadSong = () => {
+    return axios.post(API_URL + 'download', { headers: authHeader() });
 }
 

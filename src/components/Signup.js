@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Container, Modal } from "react-bootstrap";
 import { TopNavbar } from "./About";
-import { login, register } from "../service/auth.service";
+import { register } from "../service/auth.service";
 import { useHistory } from "react-router";
 
 const NotiPopup = (props) => {
@@ -41,7 +41,13 @@ export function SignUp() {
     const [pwd, setPwd] = useState('');
     const [err, setErr] = useState('');
     const [name, setName] = useState('');
-    const handleOnCLick = () => {
+    const handleOnCLick = (e) => {
+        e.preventDefault();
+        console.log('onclick signup');
+        if (name === '') {
+            setErr('name');
+            return;
+        }
         if (userName === '') {
             setErr('usr');
             return;
@@ -50,16 +56,18 @@ export function SignUp() {
             setErr('pwd');
             return;
         }
-        if (name === '') {
-            setErr('name');
-            return;
-        }
         register(userName, pwd, name).then(
             (response) => {
-                setShowModal(true);
+                if (response.status === 201) {
+                    setShowModal(true);
+                }
+                if (response.status === 202) {
+                    setErr('usrExisted');
+                }
             },
             (error) => {
-                setErr('cannotsignup')
+                console.log(error);
+                setErr('cannotsignup');
             }
         )
 
@@ -118,10 +126,16 @@ export function SignUp() {
         {
             err === 'cannotsignup' &&
             <Form.Text className="text-muted">
-                    The information you provide cannot use to register. Please edit your information!
+                    There are some problems. Please check everything again!
                 </Form.Text>
         }
-        <Button variant="primary" type="submit" onClick={() => handleOnCLick()}>
+        {
+            err === 'usrExisted' &&
+            <Form.Text className="text-muted">
+                    User name has been registered. Please choose another user name!
+                </Form.Text>
+        }
+        <Button variant="primary" type="submit" onClick={(e) => handleOnCLick(e)}>
             Sign up
         </Button>
         </Form>
