@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import Toolbar from './Toolbar';
-import {Score} from './Score';
-import { TopNavbar } from './About';
+import Toolbar from '../Toolbar';
+import {Score} from '../Score';
+import { TopNavbar } from '../About';
 
 export default class MainPage extends React.Component {
     constructor(props) {

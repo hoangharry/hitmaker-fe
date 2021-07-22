@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import * as Icon from 'react-bootstrap-icons';
-import { Button } from 'react-bootstrap';
-import crochetLogo from '../pictures/crotchet.png'
-import demisemiquaverLogo from '../pictures/demisemiquaver.png'
-import minimLogo from '../pictures/minim.png'
-import quaverLogo from '../pictures/quaver.png'
-import semibreveLogo from '../pictures/semibreve.png'
-import semiquaverLogo from '../pictures/semiquaver.png'
-
-const btnStyle = {
-    display: 'flex', marginLeft: '5px', marginRight: '5px', justifyContent: 'center', width: '80px', height: '60px'
-};
+import Button from '../common/Button'
+import crochetLogo from '../../pictures/crotchet.png'
+import demisemiquaverLogo from '../../pictures/demisemiquaver.png'
+import minimLogo from '../../pictures/minim.png'
+import quaverLogo from '../../pictures/quaver.png'
+import semibreveLogo from '../../pictures/semibreve.png'
+import semiquaverLogo from '../../pictures/semiquaver.png'
 
 class AddButton extends Component {
     constructor(props) {
@@ -24,8 +20,8 @@ class AddButton extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
-            <Icon.FileEarmarkPlus style={{fontSize: '2em'}}/>
+            <Button onClick={() => this.handleOnCLick()}>
+                <Icon.FileEarmarkPlus style={{fontSize: '2em'}}/>
             </Button>
         )
     }
@@ -42,7 +38,7 @@ class SemibreveBtn extends Component {
     }
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <img style={{marginTop: '5px'}} src={semibreveLogo} width="30px" height="30px" alt="img"></img>
             </Button>            
         )
@@ -61,7 +57,7 @@ class MinimBtn extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <img src={minimLogo} width="50px" height="45px" alt="img"></img>
             </Button>            
         )
@@ -80,7 +76,7 @@ class CrotchetBtn extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <img src={crochetLogo} width="40px" height="50px" alt="img"></img>
             </Button>            
         )
@@ -99,7 +95,7 @@ class QuaverBtn extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <img src={quaverLogo} width="30px" height="50px" alt="img"></img>
             </Button>            
         )
@@ -118,7 +114,7 @@ class SemiQuaverBtn extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <img src={semiquaverLogo} width="40px" height="45px" alt="img"></img>
             </Button>            
         )
@@ -137,7 +133,7 @@ class DemisemiQuaverBtn extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button  onClick={() => this.handleOnCLick()}>
                 <img src={demisemiquaverLogo} width="40px" height="50px" alt="img"></img>
             </Button>            
         )
@@ -156,7 +152,7 @@ class PlayButton extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <Icon.PlayBtn style={{fontSize: '2em'}}/>
             </Button>            
         )
@@ -175,7 +171,7 @@ class PauseButton extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <Icon.PauseBtn style={{fontSize: '2em'}}/>
             </Button>  
         )
@@ -194,7 +190,7 @@ class GenerateButton extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <Icon.ArrowClockwise style={{fontSize: '2em'}}/>
             </Button>  
         )
@@ -213,7 +209,7 @@ class DownloadButton extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <Icon.BoxArrowDown style={{fontSize: '2em'}}/>
             </Button>  
         )
@@ -232,7 +228,7 @@ class BackspaceButton extends Component {
 
     render() {
         return (
-            <Button style={btnStyle} variant="warning" size="lg" onClick={() => this.handleOnCLick()}>
+            <Button onClick={() => this.handleOnCLick()}>
                 <Icon.Backspace style={{ fontSize: '2em' }}/>
             </Button>
         )

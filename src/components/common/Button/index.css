@@ -1,0 +1,18 @@
+.shared-button {
+    display: flex;
+    margin: 0 5px;
+    justify-content: center;
+    width: 80px;
+    height: 60px;
+    border-radius: 5px;
+    border: 0px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+    background-color: #f5df4d;
+    align-items: center;
+}
+
+.shared-button:hover {
+    background-color: #e3cf1e;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.16), 0 8px 12px 0 rgba(0, 0, 0, 0.3);
+}
