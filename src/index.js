@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { SongInfoContextProvider } from './context/SongInfoContext';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { SongInfoContextProvider } from './context/SongInfoContext'
 
 import App from './App'
 
@@ -12,7 +12,7 @@ ReactDOM.render(
     </SongInfoContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
-);
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

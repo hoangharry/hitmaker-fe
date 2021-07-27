@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
-import { Modal, Button, Form } from 'react-bootstrap';
-import { useHistory } from "react-router-dom";
-import { SongInfoContext } from "../context/SongInfoContext";
+import { useContext, useState } from 'react'
+import { Modal, Button, Form } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
+import { SongInfoContext } from '../context/SongInfoContext'
 export function ExceedNotesDialog(props) {
 
-    return (
-        <Modal
+  return (
+    <Modal
       {...props}
       size="small"
       aria-labelledby="contained-modal-title-vcenter"
@@ -25,32 +25,32 @@ export function ExceedNotesDialog(props) {
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
-    )
+  )
 }
 
 export const InitDialog = () => {
-    const [timeSignature, setTimeSignature] = useState('4/4');
-    const [isShow, setIsShow] = useState(true) 
-    const [title, setTitle] = useState('');
-    const [err, setErr] = useState('');
-    const { handleSong } = useContext(SongInfoContext);
-    const history = useHistory();
-    const onHide = () => {
-      if (title === '') {
-        setErr('title');
-        return;
-      }
-      handleSong([{keySignature: '', saveName: title, streamParts: [], timeSignature: timeSignature}]);
-      setIsShow(false);
-      history.push('/song');
+  const [timeSignature, setTimeSignature] = useState('4/4')
+  const [isShow, setIsShow] = useState(true) 
+  const [title, setTitle] = useState('')
+  const [err, setErr] = useState('')
+  const { handleSong } = useContext(SongInfoContext)
+  const history = useHistory()
+  const onHide = () => {
+    if (title === '') {
+      setErr('title')
+      return
     }
-    const onAboutClick = () => {
-      setIsShow(false);
-      history.push('/');
-    }
+    handleSong([{keySignature: '', saveName: title, streamParts: [], timeSignature: timeSignature}])
+    setIsShow(false)
+    history.push('/song')
+  }
+  const onAboutClick = () => {
+    setIsShow(false)
+    history.push('/')
+  }
     
-    return (
-        <Modal
+  return (
+    <Modal
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -63,26 +63,26 @@ export const InitDialog = () => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-            <Form.Group className="mb-3" controlId="titleId">
-                <Form.Label>Title</Form.Label>
-                <Form.Control type="text" placeholder="Enter title of your song" onChange={(e) => setTitle(e.target.value)}></Form.Control> 
-            </Form.Group>
-            {
-                err === 'title' &&
+          <Form.Group className="mb-3" controlId="titleId">
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" placeholder="Enter title of your song" onChange={(e) => setTitle(e.target.value)}></Form.Control> 
+          </Form.Group>
+          {
+            err === 'title' &&
                 <Form.Text className="text-muted">
                     Please enter title of song
                 </Form.Text>
-            }
+          }
 
-            <Form.Group className="mb-3" controlId="timeSnId">
+          <Form.Group className="mb-3" controlId="timeSnId">
             <Form.Label>TimeSignature</Form.Label>
-                <Form.Control as="select" custom onChange={(e) => setTimeSignature(e.target.value)}>
-                  <option value='4/4'>4/4</option>
-                  <option value='3/4'>3/4</option>
-                  <option value='2/4'>2/4</option>  
-                </Form.Control> 
+            <Form.Control as="select" custom onChange={(e) => setTimeSignature(e.target.value)}>
+              <option value='4/4'>4/4</option>
+              <option value='3/4'>3/4</option>
+              <option value='2/4'>2/4</option>  
+            </Form.Control> 
                 
-            </Form.Group>
+          </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -90,5 +90,5 @@ export const InitDialog = () => {
         <Button onClick={() => onAboutClick()}>About</Button>
       </Modal.Footer>
     </Modal>
-    )
+  )
 }
