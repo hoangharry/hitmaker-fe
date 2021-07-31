@@ -27,6 +27,25 @@ class AddButton extends Component {
   }
 }
 
+class SaveButton extends Component {
+  constructor(props) {
+    super(props)
+    this.handleOnCLick = this.handleOnCLick.bind(this)
+  }
+
+  handleOnCLick() {
+    this.props.onSaveSong()
+  }
+
+  render() {
+    return (
+      <Button onClick={() => this.handleOnCLick()}>
+        <Icon.Save2 style={{fontSize: '2em'}}/>
+      </Button>
+    )
+  }
+}
+
 class SemibreveBtn extends Component {
   constructor(props) {
     super(props)
@@ -237,6 +256,7 @@ class BackspaceButton extends Component {
 
 export {
   AddButton,
+  SaveButton,
   PlayButton,
   PauseButton,
   GenerateButton,

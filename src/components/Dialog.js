@@ -103,3 +103,56 @@ export const InitDialog = () => {
     </Modal>
   )
 }
+
+
+export function NoInternetDialog(props) {
+
+  return (
+    <Modal
+      {...props}
+      size="small"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Alert
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          No internet connection! Please check your connection!
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+export function ErrorDialog(props) {
+
+  return (
+    <Modal
+      {...props}
+      size="small"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Alert
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          Something went wrong! Please try again!
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}

@@ -19,7 +19,7 @@ export const login = (usrname, pwd) => {
 }
 
 export const logout = () => {
-  localStorage.removeItem('token')
+  sessionStorage.removeItem('token')
 }
 
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { GenerateButton, DownloadButton, BackspaceButton, SemibreveBtn, 
-  MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn } from '../Buttons'
+  MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn, SaveButton } from '../Buttons'
 import { Form } from 'react-bootstrap'
 import './index.css'
 
@@ -43,6 +43,7 @@ export default class Toolbar extends Component {
           <div className='button-group'>
             <DownloadButton onDownload={this.props.onDownload}/>
             <GenerateButton onGenerate={this.props.onGenerate}/>{' '}
+            <SaveButton onSaveSong={this.props.onSaveSong}/>{' '}
             <BackspaceButton onDeleteNote={this.props.onDeleteNote}/>
           </div>
         </div>

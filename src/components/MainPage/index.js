@@ -1,37 +1,45 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import Toolbar from '../Toolbar'
 import {Score} from '../Score'
 import { TopNavbar } from '../About'
 import { SongInfoContext } from '../../context/SongInfoContext'
 import { generateSong, saveSong, downloadSong } from '../../service/user.service'
+import { ErrorDialog, NoInternetDialog } from '../Dialog'
 
-export default class MainPage extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      notes: [[], []],
-      curNote: '',
-      curClef: ['treble', 'alto'],
-      firstClef: ['treble', 'alto'],
-      stave: 0,
-      keySignature: 'C'
+export function MainPage(props) {
+  // constructor(props) {
+  //   super(props)
+  //   this.state = {
+  //     notes: [[], []],
+  //     curNote: '',
+  //     curClef: ['treble', 'alto'],
+  //     firstClef: ['treble', 'alto'],
+  //     stave: 0,
+  //     keySignature: 'C'
 
-    }
-    this.onClickNote = this.onClickNote.bind(this)
-    this.onChangeNote = this.onChangeNote.bind(this)
-    this.onDeleteNote = this.onDeleteNote.bind(this)
-    this.onGenerate = this.onGenerate.bind(this)
-    this.onDownload = this.onDownload.bind(this)
-    this.onChangeClef = this.onChangeClef.bind(this)
-    this.onChangeStave = this.onChangeStave.bind(this)
-  }
-  
+  //   }
+  //   this.onClickNote = this.onClickNote.bind(this)
+  //   this.onChangeNote = this.onChangeNote.bind(this)
+  //   this.onDeleteNote = this.onDeleteNote.bind(this)
+  //   this.onGenerate = this.onGenerate.bind(this)
+  //   this.onDownload = this.onDownload.bind(this)
+  //   this.onChangeClef = this.onChangeClef.bind(this)
+  //   this.onChangeStave = this.onChangeStave.bind(this)
+  // }
+  const [notes, setNotes] = useState([[], []])
+  const [curNote, setCurNote] = useState('')
+  const [firstClef, setFirstClef] = useState(['treble', 'alto'])
+  const [stave, setStave] = useState(0)
+  const [keySignature, setKeysignature] = useState('C')
+  const [isShowErr, setIsShowErr] = useState(false)
+  const [isShowNoConn, setIsShowNoConn] = useState(false)
+  const { song, handleSong } = useContext(SongInfoContext)
 
-  onClickNote(noteType) {
-    let notes = this.state.notes[this.state.stave].slice()
+  const onClickNote = (noteType) => {
+    let tmpNote = notes[stave]
+    // let notes = this.state.notes[this.state.stave].slice()
     var note = {
-      note: this.state.curNote,
-      clef: this.state.curClef[this.state.stave],
+      note: curNote,
     }
     if (noteType === 'semibreve') {
       note.dur = 32 
@@ -46,108 +54,108 @@ export default class MainPage extends React.Component {
     } else if (noteType === 'demisemiquaver') {
       note.dur = 1
     }
-    notes = notes.concat(note)
-    if (this.state.stave === 0) {
-      const notesOther = this.state.notes[1].slice()
-      this.setState({
-        notes: [notes, notesOther]
-      })
+    tmpNote = tmpNote.concat(note)
+    if (stave === 0) {
+      const notesOther = notes[1].slice()
+      // this.setState({
+      //   notes: [tmpNote, notesOther]
+      // })
+      setNotes([tmpNote, notesOther])
     } else {
-      const notesOther = this.state.notes[0].slice()
-      this.setState({
-        notes: [notesOther, notes]
-      })
+      const notesOther = notes[0].slice()
+      // this.setState({
+      //   notes: [notesOther, tmpNote]
+      // })
+      setNotes([notesOther, tmpNote])
     }
   }
 
-  onDeleteNote() {
-    const notes = this.state.notes[this.state.stave].slice(0, this.state.notes[this.state.stave].length - 1)
-    if (this.state.stave === 0) {
-      const notesOther = this.state.notes[1].slice()
-      this.setState({
-        notes: [notes, notesOther]
-      })
+  const onDeleteNote = () => {
+    // const notes = this.state.notes[this.state.stave].slice(0, this.state.notes[this.state.stave].length - 1)
+    const tmpNotes = notes[stave].slice(0, notes[stave].length - 1)
+    if (stave === 0) {
+      const notesOther = notes[1].slice()
+      // this.setState({
+      //   notes: [notes, notesOther]
+      // })
+      setNotes([tmpNotes, notesOther])
     } else {
-      const notesOther = this.state.notes[0].slice()
-      this.setState({
-        notes: [notesOther, notes]
-      })
+      const notesOther = notes[0].slice()
+      // this.setState({
+      //   notes: [notesOther, notes]
+      // })
+      setNotes([notesOther, tmpNotes])
     }
   }
 
-  onGenerate() {
-    generateSong()
-  }
-
-  onChangeKeySn(keysn) {
-    this.setState({
-      keySignature: keysn
-    })
-  }
-
-  onChangeStave(stave) {
-    this.setState({
-      stave: stave
-    })
-  }
-
-  onChangeNote(note) {
-    this.setState({
-      curNote: note
-    })
-  }
-
-  onChangeClef(clef) {
-    if (this.state.notes[this.state.stave].length === 0) {
-      if (this.state.stave === 0) {
-        const otherClef = this.state.firstClef[1]
-        this.setState({
-          firstClef: [clef, otherClef]
-        })
+  const onGenerate = () => {
+    if (!window.navigator.onLine) {
+      setIsShowNoConn(true)
+    }
+    generateSong(song[0].timeSignature, song[0].keySignature, notes).then((response) => {
+      console.log('res', response)
+      if (response.status === 200) {
+        handleSong(response.data)
       } else {
-        const otherClef = this.state.firstClef[0]
-        this.setState({
-          firstClef: [otherClef, clef]
-        })
+        setIsShowErr(true)
       }
-    } else {
-      if (this.state.stave === 0) {
-        const otherClef = this.state.curClef[1]
-        this.setState({
-          curClef: [clef, otherClef]
-        })
-      } else {
-        const otherClef = this.state.curClef[0]
-        this.setState({
-          curClef: [otherClef, clef]
-        })
-      }
-    }
+    }).catch((err) => {
+      setIsShowErr(true)
+      console.log(err)
+    })
   }
 
-  onDownload() {
+  const onChangeKeySn = (keysn) => {
+    setKeysignature(keysn)
+  }
+
+  const onChangeStave = (stave) => {
+    setStave(stave)
+  }
+
+  const onChangeNote = (note) => {
+    setCurNote(note)
+  }
+
+  const onDownload = () => {
+    if (!window.navigator.onLine) {
+      setIsShowNoConn(true)
+    }
     downloadSong()
   }
 
-  render() {
-    return (
-      <>  
-        <TopNavbar/>
-        <Toolbar
-          onClickNote={this.onClickNote}
-          onChangeNote={this.onChangeNote}
-          onDeleteNote={this.onDeleteNote}
-          onGenerate={this.onGenerate}
-          onDownload={this.onDownload}  
-          onChangeClef={this.onChangeClef} 
-          onChangeStave={this.onChangeStave}                 
-        />
-        <Score notes={this.state.notes}
-          onDeleteNote={this.onDeleteNote}
-          firstClef={this.state.firstClef}
-          timeSignature={this.state.timeSignature}
-        />
-      </>
-    )
+  const onSaveSong = () => {
+    if (!window.navigator.onLine) {
+      setIsShowNoConn(true)
+    }
+    saveSong(song[0].timeSignature, song[0].keySignature, notes)
   }
+
+  return (
+    <>  
+      <ErrorDialog
+        show={isShowErr}
+        onHide = {() => setIsShowErr(false)}/>
+      <NoInternetDialog
+        show = {isShowNoConn}
+        onHide = {() => setIsShowNoConn(false)}/>
+      <TopNavbar/>
+      <Toolbar
+        onClickNote={onClickNote}
+        onChangeNote={onChangeNote}
+        onDeleteNote={onDeleteNote}
+        onGenerate={onGenerate}
+        onDownload={onDownload}  
+        // onChangeClef={onChangeClef} 
+        onChangeKeySn={onChangeKeySn}
+        onChangeStave={onChangeStave}  
+        onSaveSong={onSaveSong}               
+      />
+      <Score notes={notes}
+        onDeleteNote={onDeleteNote}
+        firstClef={firstClef}
+        keySignature={keySignature}
+      />
+    </>
+  )
 }

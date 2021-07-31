@@ -2,7 +2,7 @@
 import './App.css'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { InitDialog } from './components/Dialog'
-import MainPage from './components/MainPage'
+import { MainPage } from './components/MainPage'
 import { About } from './components/About'
 import { SignUp } from './components/Signup'
 import { Login } from './components/Login'

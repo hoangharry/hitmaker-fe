@@ -19,39 +19,7 @@ export function Score(props) {
   mapDuration.set(3, '16d')
   mapDuration.set(6, '8d')
   const { song, handleSong } = useContext(SongInfoContext)
-  var songTmp = [{   
-    timeSignature: '3/4',
-    keySignature: 'D',
-    streamParts: [
-      [{
-        chord: ['F/4', 'E/5', 'B#/4'],
-        dur: '16'
-      },
-      {
-        note: 'F/4',
-        dur: '8'
-      },
-      {
-        keySignature: 'B-',
-        note: 'F/4',
-        dur: '24'
-      },
-      // {
-      //   dur: '4'
-      // },
-      ],
-      [{
-        note: 'F/4',
-        dur: '16'
-      },
-      {
-        note: 'F/4',
-        dur: '8'
-      }
-      ]]
-  }]
   
-  // handleSong(songTmp)
   console.log('song', song)
   let beatsPerBar = 0
   if (song[0].timeSignature === '4/4') {
@@ -119,8 +87,11 @@ export function Score(props) {
 
   const drawNotes = (staveN, context, svgContainer, props) => {
     const width = svgContainer.getBoundingClientRect().width
-    // const notes = props.notes[staveN]
-    const notes = song[0].streamParts[staveN]
+    let notes = props.notes[staveN]
+    if (song[0].streamParts[staveN] !== undefined) {
+      notes = song[0].streamParts[staveN]
+    }
+    
     console.log('notes', notes)
     if (notes.length === 0) {
       var stave
