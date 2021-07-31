@@ -2,6 +2,8 @@ import React, { useContext } from 'react'
 import Toolbar from '../Toolbar'
 import {Score} from '../Score'
 import { TopNavbar } from '../About'
+import { SongInfoContext } from '../../context/SongInfoContext'
+import { generateSong, saveSong, downloadSong } from '../../service/user.service'
 
 export default class MainPage extends React.Component {
   constructor(props) {
@@ -23,6 +25,7 @@ export default class MainPage extends React.Component {
     this.onChangeClef = this.onChangeClef.bind(this)
     this.onChangeStave = this.onChangeStave.bind(this)
   }
+  
 
   onClickNote(noteType) {
     let notes = this.state.notes[this.state.stave].slice()
@@ -73,7 +76,7 @@ export default class MainPage extends React.Component {
   }
 
   onGenerate() {
-        
+    generateSong()
   }
 
   onChangeKeySn(keysn) {
@@ -123,6 +126,7 @@ export default class MainPage extends React.Component {
   }
 
   onDownload() {
+    downloadSong()
   }
 
   render() {

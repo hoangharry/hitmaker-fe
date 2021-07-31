@@ -33,6 +33,7 @@ export const InitDialog = () => {
   const [isShow, setIsShow] = useState(true) 
   const [title, setTitle] = useState('')
   const [err, setErr] = useState('')
+  const [keySn, setKeySn] = useState('C')
   const { handleSong } = useContext(SongInfoContext)
   const history = useHistory()
   const onHide = () => {
@@ -40,7 +41,7 @@ export const InitDialog = () => {
       setErr('title')
       return
     }
-    handleSong([{keySignature: '', saveName: title, streamParts: [], timeSignature: timeSignature}])
+    handleSong([{keySignature: keySn, saveName: title, streamParts: [], timeSignature: timeSignature}])
     setIsShow(false)
     history.push('/song')
   }
@@ -48,6 +49,7 @@ export const InitDialog = () => {
     setIsShow(false)
     history.push('/')
   }
+  const keySignatures = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'F', 'B-', 'E-', 'A-', 'D-', 'G-', 'C-']
     
   return (
     <Modal
@@ -82,6 +84,15 @@ export const InitDialog = () => {
               <option value='2/4'>2/4</option>  
             </Form.Control> 
                 
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="keySnId">
+            <Form.Label>Key Signature</Form.Label>
+            <Form.Control as="select" custom onChange={(e) => setKeySn(e.target.value)}>
+              { keySignatures.map((v, idx) => {
+                return <option key={idx}>{v}</option>
+              })}
+            </Form.Control> 
+                            
           </Form.Group>
         </Form>
       </Modal.Body>

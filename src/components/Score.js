@@ -18,8 +18,41 @@ export function Score(props) {
   mapDuration.set(12, '4d')
   mapDuration.set(3, '16d')
   mapDuration.set(6, '8d')
-  const { song } = useContext(SongInfoContext)
-
+  const { song, handleSong } = useContext(SongInfoContext)
+  var songTmp = [{   
+    timeSignature: '3/4',
+    keySignature: 'D',
+    streamParts: [
+      [{
+        chord: ['F/4', 'E/5', 'B#/4'],
+        dur: '16'
+      },
+      {
+        note: 'F/4',
+        dur: '8'
+      },
+      {
+        keySignature: 'B-',
+        note: 'F/4',
+        dur: '24'
+      },
+      // {
+      //   dur: '4'
+      // },
+      ],
+      [{
+        note: 'F/4',
+        dur: '16'
+      },
+      {
+        note: 'F/4',
+        dur: '8'
+      }
+      ]]
+  }]
+  
+  // handleSong(songTmp)
+  console.log('song', song)
   let beatsPerBar = 0
   if (song[0].timeSignature === '4/4') {
     beatsPerBar = 32
@@ -77,7 +110,7 @@ export function Score(props) {
     mapKey.set('D-', 'bbbbb')
     mapKey.set('G-', 'bbbbbb')
     mapKey.set('C-', 'bbbbbbb')
-
+    return mapKey.get(keySn)
 
   }
   const notesTreble = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6']
@@ -86,7 +119,8 @@ export function Score(props) {
 
   const drawNotes = (staveN, context, svgContainer, props) => {
     const width = svgContainer.getBoundingClientRect().width
-    const notes = props.notes[staveN]
+    // const notes = props.notes[staveN]
+    const notes = song[0].streamParts[staveN]
     console.log('notes', notes)
     if (notes.length === 0) {
       var stave
@@ -94,6 +128,9 @@ export function Score(props) {
         stave = new VF.Stave(10, 100, width)
       } else {
         stave = new VF.Stave(10, 0, width)
+      }
+      if (song[0].keySignature != '') {
+        stave.addKeySignature(song[0].keySignature)
       }
       stave.addClef(props.firstClef[staveN]).addTimeSignature(song[0].timeSignature)
       stave.setContext(context).draw()
@@ -107,9 +144,11 @@ export function Score(props) {
       let prevStave
       var tmpNotes = []
       var isFisrt = true
+      var keySn = ''
       notes.forEach((v, idx) => {
+        console.log(v)
         if (v.note) {
-          tmpduration += v.dur
+          tmpduration += parseInt(v.dur)
           let tmpClefNotes
           if (curClef === 'treble') {
             tmpClefNotes = notesTreble
@@ -130,13 +169,19 @@ export function Score(props) {
               curClef = 'bass'
             }
           }
-          if (mapDuration.get(v.dur).includes('d')) {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(v.dur), auto_stem: true}).addDotToAll())
-          } else {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(v.dur), auto_stem: true}))
+          if (v.keySignature){
+            keySn = v.keySignature
+            if (keySn.includes('-')) {
+              keySn = keySn.slice(0, -1) + 'b'
+            }
           }
-        } else {
-          tmpduration += v.dur
+          if (mapDuration.get(parseInt(v.dur)).includes('d')) {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
+          } else {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
+          }
+        } else if (v.chord) {
+          tmpduration += parseInt(v.dur)
           let tmpClefNotes
           if (curClef === 'treble') {
             tmpClefNotes = notesTreble
@@ -157,10 +202,30 @@ export function Score(props) {
               curClef = 'bass'
             }
           }
-          if (mapDuration.get(v.dur).includes('d')) {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(v.dur), auto_stem: true}).addDotToAll())
+          if (v.keySignature) {
+            keySn = v.keySignature
+            if (keySn.includes('-')) {
+              keySn = keySn.slice(0, -1) + 'b'
+            }
+          }
+          if (mapDuration.get(parseInt(v.dur)).includes('d')) {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
           } else {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(v.dur), auto_stem: true}))
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
+          }
+        } else {
+          var note
+          if (curClef == 'treble') {
+            note = 'A/4'
+          } else if (curClef == 'alto') {
+            note = 'A/3'
+          } else if (curClef == 'bass') {
+            note = 'A/2'
+          }
+          if (mapDuration.get(parseInt(v.dur)).includes('d')) {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [note], duration: mapDuration.get(parseInt(v.dur)) + 'r', auto_stem: true}).addDotToAll())
+          } else {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [note], duration: mapDuration.get(parseInt(v.dur)) + 'r', auto_stem: true}))
           }
         }
                 
@@ -171,8 +236,12 @@ export function Score(props) {
         }
         if (tmpduration === beatsPerBar) {
           if (isFisrt) {
-            tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50)
+            var l = tmpNotes.length > 4 ? tmpNotes.length*50 : tmpNotes.length*50 + 100
+            tmpStave = new VF.Stave(staveX, staveY, l)
             tmpStave.addClef(props.firstClef[staveN]).addTimeSignature(song[0].timeSignature)
+            if (song[0].keySignature != '') {
+              tmpStave.addKeySignature(song[0].keySignature)
+            }
             tmpStave.setContext(context).draw()
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
             prevStave = tmpStave
@@ -188,6 +257,10 @@ export function Score(props) {
             } else {
               tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*50)
             }
+            if (keySn != '') {
+              tmpStave.addKeySignature(keySn)
+              keySn = ''
+            }
             tmpStave.setContext(context).draw()
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
             prevStave = tmpStave
@@ -200,8 +273,12 @@ export function Score(props) {
             console.log('come here')
             var lastStave = checkNotes(tmpNotes)
             if (isFisrt) {
-              tmpStave = new VF.Stave(staveX, staveY, lastStave.notes.length*50)
+              l = tmpNotes.length > 4 ? tmpNotes.length*50 : tmpNotes.length*50 + 100
+              tmpStave = new VF.Stave(staveX, staveY, l)
               tmpStave.addClef(props.firstClef[staveN]).addTimeSignature(song[0].timeSignature)
+              if (song[0].keySignature != '') {
+                tmpStave.addKeySignature(song[0].keySignature)
+              }
               tmpStave.setContext(context).draw()
               VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes)
             } else {
@@ -214,6 +291,10 @@ export function Score(props) {
                 console.log('4')
                 tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, lastStave.notes.length*50)
                 console.log(prevStave.x + prevStave.width + lastStave.notes.length*50)
+              }
+              if (keySn != '') {
+                tmpStave.addKeySignature(keySn)
+                keySn = ''
               }
               tmpStave.setContext(context).draw()
               VF.Formatter.FormatAndDraw(context, tmpStave, lastStave.notes)

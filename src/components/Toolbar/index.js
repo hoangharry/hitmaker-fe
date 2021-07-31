@@ -11,7 +11,6 @@ export default class Toolbar extends Component {
       note: 'C/2'
     }
     this.handleOnChangeNote = this.handleOnChangeNote.bind(this)
-    // this.handleOnChangeClef = this.handleOnChangeClef.bind(this);
     this.handleOnChangeStave = this.handleOnChangeStave.bind(this)
     this.handleOnChangeKeySn = this.handleOnChangeKeySn.bind(this)
   }
@@ -24,9 +23,6 @@ export default class Toolbar extends Component {
     this.props.onChangeNote(e)
   }
 
-  // handleOnChangeClef(e) {
-  //     this.props.onChangeClef(e);
-  // }
 
   handleOnChangeStave(e) {
     this.props.onChangeStave(Number(e))
