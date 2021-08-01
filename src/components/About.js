@@ -25,15 +25,17 @@ export function About() {
 
 export function TopNavbar() {
   const history = useHistory()
-  const { nameUsr, handleNameUsr, handleSong } = useContext(SongInfoContext)
-  console.log('nameusr', nameUsr)
+  const { handleSong } = useContext(SongInfoContext)
+  // console.log('nameusr', nameUsr)
   let navlinks
+  var nameUsr = sessionStorage.getItem('name')
+  console.log(nameUsr)
   const onLogout = () => {
-    handleNameUsr('')
     handleSong([])
     logout()
   } 
-  if (nameUsr !== '') {
+
+  if (nameUsr !== undefined && nameUsr !== null) {
     navlinks = <Nav>
       <Nav.Link onClick ={() => history.push('/user')}>{nameUsr}</Nav.Link>
       <Nav.Link onClick ={() => onLogout()}>Log out</Nav.Link>

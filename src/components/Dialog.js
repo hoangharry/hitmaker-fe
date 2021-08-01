@@ -36,6 +36,9 @@ export const InitDialog = () => {
   const [keySn, setKeySn] = useState('C')
   const { handleSong } = useContext(SongInfoContext)
   const history = useHistory()
+  if (sessionStorage.getItem('token') === undefined) {
+    history.push('/login')
+  }
   const onHide = () => {
     if (title === '') {
       setErr('title')

@@ -26,9 +26,10 @@ export function Login() {
       console.log('res', response)
       if (response.status === 201) {
         sessionStorage.setItem('token', response.data.token)
+        sessionStorage.setItem('name', response.data.name)
         handleSong(response.data.data)
-        handleNameUsr(response.data.name)
-        console.log('nameUsr', nameUsr)
+        // handleNameUsr(response.data.name)
+        // console.log('nameUsr', nameUsr)
         history.push('/user')
       } else {
         setErr('cannotlogin')

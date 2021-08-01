@@ -19,7 +19,12 @@ export function Score(props) {
   mapDuration.set(3, '16d')
   mapDuration.set(6, '8d')
   const { song, handleSong } = useContext(SongInfoContext)
+  const history = useHistory()
   
+  if (song[0].timeSignature === undefined || song[0].timeSignature === '') {
+    history.push('/init')
+  }
+
   console.log('song', song)
   let beatsPerBar = 0
   if (song[0].timeSignature === '4/4') {

@@ -20,6 +20,7 @@ export const login = (usrname, pwd) => {
 
 export const logout = () => {
   sessionStorage.removeItem('token')
+  sessionStorage.removeItem('name')
 }
 
 

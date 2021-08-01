@@ -7,6 +7,9 @@ import { SongInfoContext } from '../context/SongInfoContext'
 export function UserPage() {
   const history = useHistory()
   const { song } = useContext(SongInfoContext)
+  if (sessionStorage.getItem('token') === undefined) {
+    history.push('/login')
+  }
   const onEditSong = () => {
     history.push({ pathname: '/song'})
   }

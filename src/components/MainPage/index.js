@@ -37,7 +37,6 @@ export function MainPage(props) {
 
   const onClickNote = (noteType) => {
     let tmpNote = notes[stave]
-    // let notes = this.state.notes[this.state.stave].slice()
     var note = {
       note: curNote,
     }
