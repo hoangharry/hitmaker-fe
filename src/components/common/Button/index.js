@@ -2,7 +2,7 @@ import React from 'react'
 import './index.css'
 
 const Button = ({
-  label,
+  children,
   onClick = () => {},
   isEnable = true,
   className = '',
@@ -14,7 +14,7 @@ const Button = ({
       onClick={onClick}
       className={`shared-button ${className}`}
     >
-      {label}
+      {children}
     </button>
   )
 }
