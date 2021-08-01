@@ -94,7 +94,11 @@ export function MainPage(props) {
     generateSong(song[0].timeSignature, song[0].keySignature, notes).then((response) => {
       console.log('res', response)
       if (response.status === 200) {
-        handleSong(response.data)
+        console.log('from gen', response.data)
+        var tmp = response.data
+        tmp.saveName = song[0].saveName
+        handleSong([tmp])
+        setNotes(response.data.streamParts)
       } else {
         setIsShowErr(true)
       }
@@ -117,17 +121,21 @@ export function MainPage(props) {
   }
 
   const onDownload = () => {
+    console.log('vo nef ma')
     if (!window.navigator.onLine) {
       setIsShowNoConn(true)
     }
-    downloadSong()
+    const FileDownload = require('js-file-download')
+    downloadSong().then((response) => {
+      FileDownload(response.data, song[0].saveName + '.mid')
+    })
   }
 
   const onSaveSong = () => {
     if (!window.navigator.onLine) {
       setIsShowNoConn(true)
     }
-    saveSong(song[0].timeSignature, song[0].keySignature, notes)
+    saveSong(song[0].timeSignature, song[0].keySignature, notes, song[0].saveName)
   }
 
   return (

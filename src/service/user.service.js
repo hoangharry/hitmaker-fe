@@ -4,13 +4,14 @@ import authHeader from './auth-header'
 
 const API_URL = 'http://127.0.0.1:4000/'
 
-export const generateSong = (timeSignature, keySignature, streamParts) => {
+export async function generateSong(timeSignature, keySignature, streamParts) {
   const data = { timeSignature, keySignature, streamParts}
-  return axios.post(API_URL + 'generate', data, {headers: authHeader()} )
+  let res = await axios.post(API_URL + 'generate', data, {headers: authHeader()} )
+  return res
 }
 
-export const saveSong = (timeSignature, keySignature, streamParts) => {
-  const data = { timeSignature, keySignature, streamParts}
+export const saveSong = (timeSignature, keySignature, streamParts, saveName) => {
+  const data = { timeSignature, keySignature, streamParts, saveName}
   return axios.post(API_URL + 'save', data, {headers: authHeader()})
 }
 

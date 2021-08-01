@@ -94,6 +94,9 @@ export function Score(props) {
     const width = svgContainer.getBoundingClientRect().width
     let notes = props.notes[staveN]
     if (song[0].streamParts[staveN] !== undefined) {
+      if (song[0].streamParts[staveN].length === 0) {
+        return
+      }
       notes = song[0].streamParts[staveN]
     }
     
@@ -121,6 +124,7 @@ export function Score(props) {
       var tmpNotes = []
       var isFisrt = true
       var keySn = ''
+      var catchRest = 0
       notes.forEach((v, idx) => {
         console.log(v)
         if (v.note) {
@@ -189,9 +193,9 @@ export function Score(props) {
             chordNote.push(n.note)
           })
           if (mapDuration.get(parseInt(v.dur)).includes('d')) {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
           } else {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
           }
         } else {
           var note
@@ -241,10 +245,10 @@ export function Score(props) {
               tmpStave.addKeySignature(keySn)
               keySn = ''
             }
-            var beams = VF.Beam.generateBeams(tmpNotes)
-            beams.forEach(function (b) {
-              b.setContext(context).draw()
-            })
+            // var beams = VF.Beam.generateBeams(tmpNotes)
+            // beams.forEach(function (b) {
+            //   b.setContext(context).draw()
+            // })
             tmpStave.setContext(context).draw()
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
             prevStave = tmpStave
