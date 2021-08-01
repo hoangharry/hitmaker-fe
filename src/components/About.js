@@ -33,6 +33,7 @@ export function TopNavbar() {
   const onLogout = () => {
     handleSong([])
     logout()
+    history.push('/')
   } 
 
   if (nameUsr !== undefined && nameUsr !== null) {

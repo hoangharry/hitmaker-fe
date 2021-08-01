@@ -166,11 +166,11 @@ export function Score(props) {
           } else {
             tmpClefNotes = notesBass
           }
-          if (!tmpClefNotes.includes(v.chord[0])) {
-            if (notesTreble.includes(v.chord[0])) {
+          if (!tmpClefNotes.includes(v.chord[0].note)) {
+            if (notesTreble.includes(v.chord[0].note)) {
               tmpNotes.push(new VF.ClefNote('treble'))
               curClef = 'treble'
-            } else if (notesAlto.includes(v.chord[0])) {
+            } else if (notesAlto.includes(v.chord[0].note)) {
               tmpNotes.push(new VF.ClefNote('alto'))
               curClef = 'alto'
             } else {
@@ -184,6 +184,10 @@ export function Score(props) {
               keySn = keySn.slice(0, -1) + 'b'
             }
           }
+          var chordNote = []
+          v.chord.forEach((n) => {
+            chordNote.push(n.note)
+          })
           if (mapDuration.get(parseInt(v.dur)).includes('d')) {
             tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: v.chord, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
           } else {
@@ -237,6 +241,10 @@ export function Score(props) {
               tmpStave.addKeySignature(keySn)
               keySn = ''
             }
+            var beams = VF.Beam.generateBeams(tmpNotes)
+            beams.forEach(function (b) {
+              b.setContext(context).draw()
+            })
             tmpStave.setContext(context).draw()
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
             prevStave = tmpStave
