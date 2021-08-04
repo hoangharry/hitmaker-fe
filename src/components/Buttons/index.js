@@ -1,257 +1,85 @@
-import React, { Component } from 'react'
-import * as Icon from 'react-bootstrap-icons'
-import Button from '../common/Button'
-import crochetLogo from '../../pictures/crotchet.png'
-import demisemiquaverLogo from '../../pictures/demisemiquaver.png'
-import minimLogo from '../../pictures/minim.png'
-import quaverLogo from '../../pictures/quaver.png'
-import semibreveLogo from '../../pictures/semibreve.png'
-import semiquaverLogo from '../../pictures/semiquaver.png'
+import React from 'react'
+import Button from 'src/components/common/Button'
+import addIcon from 'src/pictures/add-icon.png'
+import saveIcon from 'src/pictures/save-icon.png'
+import playIcon from 'src/pictures/play-icon.png'
+import downloadIcon from 'src/pictures/download-icon.png'
+import pauseIcon from 'src/pictures/pause-icon.png'
+import backspaceIcon from 'src/pictures/backspace-icon.png'
+import generateIcon from 'src/pictures/generate-icon.png'
+import crochetLogo from 'src/pictures/crotchet.png'
+import demisemiquaverLogo from 'src/pictures/demisemiquaver.png'
+import minimLogo from 'src/pictures/minim.png'
+import quaverLogo from 'src/pictures/quaver.png'
+import semibreveLogo from 'src/pictures/semibreve.png'
+import semiquaverLogo from 'src/pictures/semiquaver.png'
 
-class AddButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
+import './index.css'
 
-  handleOnCLick() {
-    this.props.onAddNew()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.FileEarmarkPlus style={{fontSize: '2em'}}/>
-      </Button>
-    )
-  }
+const ToolbarButton = ({handleClick, imgSrc, className=''}) => {
+  return (
+    <Button onClick={handleClick} className={`toolbar-button ${className}`}>
+      <img className="button-icon" src={imgSrc} alt="img"/>
+    </Button>
+  )
 }
 
-class SaveButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onSaveSong()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.Save2 style={{fontSize: '2em'}}/>
-      </Button>
-    )
-  }
+const AddButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={addIcon}/>
 }
 
-class SemibreveBtn extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onClickNote('semibreve')
-  }
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <img style={{marginTop: '5px'}} src={semibreveLogo} width="30px" height="30px" alt="img"></img>
-      </Button>            
-    )
-  }
+const SaveButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={saveIcon}/>
 }
 
-class MinimBtn extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onClickNote('minim')
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <img src={minimLogo} width="50px" height="45px" alt="img"></img>
-      </Button>            
-    )
-  }
+const SemibreveBtn = (handleClick) => {
+  const onClick = () => { handleClick('semibreve') }
+  return <ToolbarButton onClick={onClick} imgSrc={semibreveLogo}/>
 }
 
-class CrotchetBtn extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onClickNote('crotchet')
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <img src={crochetLogo} width="40px" height="50px" alt="img"></img>
-      </Button>            
-    )
-  }
+const MinimBtn = (handleClick) => {
+  const onClick = () => { handleClick('minim') }
+  return <ToolbarButton onClick={onClick} imgSrc={minimLogo}/>
 }
 
-class QuaverBtn extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onClickNote('quaver')
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <img src={quaverLogo} width="30px" height="50px" alt="img"></img>
-      </Button>            
-    )
-  }
+const CrotchetBtn = (handleClick) => {
+  const onClick = () => { handleClick('crotchet') }
+  return <ToolbarButton onClick={onClick} imgSrc={crochetLogo}/>
 }
 
-class SemiQuaverBtn extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onClickNote('semiquaver')
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <img src={semiquaverLogo} width="40px" height="45px" alt="img"></img>
-      </Button>            
-    )
-  }
+const QuaverBtn = (handleClick) => {
+  const onClick = () => { handleClick('quaver') }
+  return <ToolbarButton onClick={onClick} imgSrc={quaverLogo}/>
 }
 
-class DemisemiQuaverBtn extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onClickNote('demisemiquaver')
-  }
-
-  render() {
-    return (
-      <Button  onClick={() => this.handleOnCLick()}>
-        <img src={demisemiquaverLogo} width="40px" height="50px" alt="img"></img>
-      </Button>            
-    )
-  }
+const SemiQuaverBtn = (handleClick) => {
+  const onClick = () => { handleClick('semiquaver') }
+  return <ToolbarButton onClick={onClick} imgSrc={semiquaverLogo}/>
 }
 
-class PlayButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onPlay()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.PlayBtn style={{fontSize: '2em'}}/>
-      </Button>            
-    )
-  }
+const DemisemiQuaverBtn = (handleClick) => {
+  const onClick = () => { handleClick('demisemiquaver') }
+  return <ToolbarButton onClick={onClick} imgSrc={demisemiquaverLogo}/>
 }
 
-class PauseButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onPause()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.PauseBtn style={{fontSize: '2em'}}/>
-      </Button>  
-    )
-  }
+const PlayButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={playIcon}/>
 }
 
-class GenerateButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onGenerate()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.ArrowClockwise style={{fontSize: '2em'}}/>
-      </Button>  
-    )
-  }
+const PauseButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={pauseIcon}/>
 }
 
-class DownloadButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
-
-  handleOnCLick() {
-    this.props.onDownload()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.BoxArrowDown style={{fontSize: '2em'}}/>
-      </Button>  
-    )
-  }
+const DownloadButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={downloadIcon}/>
 }
 
-class BackspaceButton extends Component {
-  constructor(props) {
-    super(props)
-    this.handleOnCLick = this.handleOnCLick.bind(this)
-  }
+const GenerateButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={generateIcon}/>
+}
 
-  handleOnCLick() {
-    this.props.onDeleteNote()
-  }
-
-  render() {
-    return (
-      <Button onClick={() => this.handleOnCLick()}>
-        <Icon.Backspace style={{ fontSize: '2em' }}/>
-      </Button>
-    )
-  }
+const BackspaceButton = (handleClick) => {
+  return <ToolbarButton onClick={handleClick} imgSrc={backspaceIcon}/>
 }
 
 export {
