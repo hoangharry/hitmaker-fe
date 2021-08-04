@@ -28,7 +28,6 @@ export function MainPage(props) {
   // }
   const [notes, setNotes] = useState([[], []])
   const [curNote, setCurNote] = useState('')
-  const [firstClef, setFirstClef] = useState(['treble', 'alto'])
   const [stave, setStave] = useState(0)
   const [keySignature, setKeysignature] = useState('C')
   const [isShowErr, setIsShowErr] = useState(false)
@@ -160,7 +159,7 @@ export function MainPage(props) {
       />
       <Score notes={notes}
         onDeleteNote={onDeleteNote}
-        firstClef={firstClef}
+        firstClef={['treble', 'bass']}
         keySignature={keySignature}
       />
     </>
