@@ -19,13 +19,13 @@ export function UserPage() {
   } else {
     show =  <Card
       bg="warning"
-      text="light"
+      text="black"
       style={{width: '18rem', margin: '10px'}}
       className="mb-2"
       onClick={() => onEditSong()}
     >
       <Card.Body>
-        <Card.Title>{song.saveName}</Card.Title>
+        <Card.Title>{song[0].saveName}</Card.Title>
       </Card.Body>
     </Card>
   }

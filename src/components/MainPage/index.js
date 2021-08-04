@@ -98,7 +98,7 @@ export function MainPage(props) {
         var tmp = response.data
         tmp.saveName = song[0].saveName
         handleSong([tmp])
-        setNotes(response.data.streamParts)
+        setNotes([[], []])
       } else {
         setIsShowErr(true)
       }
@@ -128,6 +128,12 @@ export function MainPage(props) {
     const FileDownload = require('js-file-download')
     downloadSong().then((response) => {
       FileDownload(response.data, song[0].saveName + '.mid')
+      // const url = window.URL.createObjectURL(new Blob([response.data]))
+      // const link = document.createElement('a')
+      // link.href = url
+      // link.setAttribute('download', 'file.mid')
+      // document.body.appendChild(link)
+      // link.click()
     })
   }
 
