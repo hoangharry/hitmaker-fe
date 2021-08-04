@@ -1,8 +1,10 @@
 import Vex from 'vexflow'
 import React, { useContext, useEffect, useState} from 'react'
-import {ExceedNotesDialog} from './Dialog'
-import { SongInfoContext } from '../context/SongInfoContext'
+import {ExceedNotesDialog} from 'src/components/Dialog'
+import { SongInfoContext } from 'src/context/SongInfoContext'
 import { useHistory } from 'react-router-dom'
+
+import './index.css'
 
 export function Score(props) {
   const VF = Vex.Flow
@@ -459,22 +461,15 @@ export function Score(props) {
     drawNotes(1, context, svgContainer, props)
   })
 
-  const divStyle = {
-    marginLeft:'25%',
-    // marginTop: '20px',
-    padding:'1px 16px',
-    // height:'1000px',
-  }
-  const centerStyle = { display: 'flex',  justifyContent:'center', alignItems:'center', marginTop: '20px' }
   return (
     <>
       <ExceedNotesDialog
         show={showModal}
         onHide={() => setShowModal(false)}
       />
-      <div style={divStyle}>
-        <h5 style={centerStyle}>{song[0].saveName}</h5>
-        <div style={{width: 'auto'}} id="new-song"></div>
+      <div className="song-container">
+        <h5 className="song-title" >{song[0].saveName}</h5>
+        <div className="song-content" id="new-song"></div>
       </div>
     </>
   )
