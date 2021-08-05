@@ -14,7 +14,7 @@
 }
 
 .song-content {
-  width: 100%;
+  width: calc(100% - 20px);
   height: 100%;
   display: flex;
   justify-content: center;

@@ -9,25 +9,6 @@ import { ErrorDialog, NoInternetDialog } from '../Dialog'
 import './index.css'
 
 export function MainPage(props) {
-  // constructor(props) {
-  //   super(props)
-  //   this.state = {
-  //     notes: [[], []],
-  //     curNote: '',
-  //     curClef: ['treble', 'alto'],
-  //     firstClef: ['treble', 'alto'],
-  //     stave: 0,
-  //     keySignature: 'C'
-
-  //   }
-  //   this.onClickNote = this.onClickNote.bind(this)
-  //   this.onChangeNote = this.onChangeNote.bind(this)
-  //   this.onDeleteNote = this.onDeleteNote.bind(this)
-  //   this.onGenerate = this.onGenerate.bind(this)
-  //   this.onDownload = this.onDownload.bind(this)
-  //   this.onChangeClef = this.onChangeClef.bind(this)
-  //   this.onChangeStave = this.onChangeStave.bind(this)
-  // }
   const [notes, setNotes] = useState([[], []])
   const [curNote, setCurNote] = useState('')
   const [stave, setStave] = useState(0)
@@ -57,33 +38,20 @@ export function MainPage(props) {
     tmpNote = tmpNote.concat(note)
     if (stave === 0) {
       const notesOther = notes[1].slice()
-      // this.setState({
-      //   notes: [tmpNote, notesOther]
-      // })
       setNotes([tmpNote, notesOther])
     } else {
       const notesOther = notes[0].slice()
-      // this.setState({
-      //   notes: [notesOther, tmpNote]
-      // })
       setNotes([notesOther, tmpNote])
     }
   }
 
   const onDeleteNote = () => {
-    // const notes = this.state.notes[this.state.stave].slice(0, this.state.notes[this.state.stave].length - 1)
     const tmpNotes = notes[stave].slice(0, notes[stave].length - 1)
     if (stave === 0) {
       const notesOther = notes[1].slice()
-      // this.setState({
-      //   notes: [notes, notesOther]
-      // })
       setNotes([tmpNotes, notesOther])
     } else {
       const notesOther = notes[0].slice()
-      // this.setState({
-      //   notes: [notesOther, notes]
-      // })
       setNotes([notesOther, tmpNotes])
     }
   }
@@ -122,19 +90,12 @@ export function MainPage(props) {
   }
 
   const onDownload = () => {
-    console.log('vo nef ma')
     if (!window.navigator.onLine) {
       setIsShowNoConn(true)
     }
     const FileDownload = require('js-file-download')
     downloadSong().then((response) => {
       FileDownload(response.data, song[0].saveName + '.mid')
-      // const url = window.URL.createObjectURL(new Blob([response.data]))
-      // const link = document.createElement('a')
-      // link.href = url
-      // link.setAttribute('download', 'file.mid')
-      // document.body.appendChild(link)
-      // link.click()
     })
   }
 
@@ -167,7 +128,7 @@ export function MainPage(props) {
         />
         <Score notes={notes}
           onDeleteNote={onDeleteNote}
-          firstClef={['treble', 'bass']}
+          firstClef={['treble', 'alto']}
           keySignature={keySignature}
         />
       </div>
