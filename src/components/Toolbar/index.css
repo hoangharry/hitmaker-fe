@@ -2,11 +2,12 @@
     display: flex;
     flex-direction: column;
     padding: 15px 15px;
-    width: 20%;
-    height: 100%;
+    width: 300px;
+    min-width: 300px;
     background-color: #939597;
-    position: fixed;
     overflow: auto;
+    margin-bottom: 0;
+    align-items: center;
 }
 
 .toolbar-form {
@@ -45,4 +46,16 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .toolbar-container  {
+        width: 100%;
+    }
+}
+
+@media (min-width: 414px) and (max-width: 768px) {
+    .toolbar-form   {
+        width: 400px;
+    }
 }

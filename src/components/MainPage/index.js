@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react'
 import Toolbar from '../Toolbar'
-import {Score} from '../Score'
+import {Score} from 'src/components/Score'
 import { TopNavbar } from '../About'
-import { SongInfoContext } from '../../context/SongInfoContext'
+import { SongInfoContext } from 'src/context/SongInfoContext'
 import { generateSong, saveSong, downloadSong } from '../../service/user.service'
 import { ErrorDialog, NoInternetDialog } from '../Dialog'
+
+import './index.css'
 
 export function MainPage(props) {
   // constructor(props) {
@@ -152,22 +154,23 @@ export function MainPage(props) {
         show = {isShowNoConn}
         onHide = {() => setIsShowNoConn(false)}/>
       <TopNavbar/>
-      <Toolbar
-        onClickNote={onClickNote}
-        onChangeNote={onChangeNote}
-        onDeleteNote={onDeleteNote}
-        onGenerate={onGenerate}
-        onDownload={onDownload}  
-        // onChangeClef={onChangeClef} 
-        onChangeKeySn={onChangeKeySn}
-        onChangeStave={onChangeStave}  
-        onSaveSong={onSaveSong}               
-      />
-      <Score notes={notes}
-        onDeleteNote={onDeleteNote}
-        firstClef={['treble', 'bass']}
-        keySignature={keySignature}
-      />
+      <div className="main-page-container">
+        <Toolbar
+          onClickNote={onClickNote}
+          onChangeNote={onChangeNote}
+          onDeleteNote={onDeleteNote}
+          onGenerate={onGenerate}
+          onDownload={onDownload}  
+          onChangeKeySn={onChangeKeySn}
+          onChangeStave={onChangeStave}  
+          onSaveSong={onSaveSong}               
+        />
+        <Score notes={notes}
+          onDeleteNote={onDeleteNote}
+          firstClef={['treble', 'bass']}
+          keySignature={keySignature}
+        />
+      </div>
     </>
   )
 }
