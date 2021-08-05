@@ -19,7 +19,7 @@ import './index.css'
 const ToolbarButton = ({onClick, imgSrc, className=''}) => {
   return (
     <Button onClick={onClick} className={`toolbar-button ${className}`}>
-      <img className="button-icon" src={imgSrc} alt="img"/>
+      <img className={`button-icon ${className}`} src={imgSrc} src={imgSrc} alt="img"/>
     </Button>
   )
 }
@@ -34,7 +34,7 @@ const SaveButton = ({handleClick}) => {
 
 const SemibreveBtn = ({handleClick}) => {
   const onClick = () => { handleClick('semibreve') }
-  return <ToolbarButton onClick={onClick} imgSrc={semibreveLogo}/>
+  return <ToolbarButton onClick={onClick} imgSrc={semibreveLogo} className='semibrave'/>
 }
 
 const MinimBtn = ({handleClick}) => {

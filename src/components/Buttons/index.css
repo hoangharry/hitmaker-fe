@@ -4,6 +4,10 @@
 }
 
 .button-icon {
-  width: 30px;
   height: 30px;
 }
+
+.button-icon.semibrave {
+  height: 10px;
+}
+

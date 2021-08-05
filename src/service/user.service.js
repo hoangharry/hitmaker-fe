@@ -1,8 +1,7 @@
 import axios from 'axios'
+import { API_URL } from 'src/constants'
 
 import authHeader from './auth-header'
-
-const API_URL = 'http://127.0.0.1:4000/'
 
 export async function generateSong(timeSignature, keySignature, streamParts) {
   const data = { timeSignature, keySignature, streamParts}

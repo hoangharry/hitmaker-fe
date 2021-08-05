@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react'
-import Toolbar from '../Toolbar'
+import Toolbar from 'src/components/Toolbar'
 import {Score} from 'src/components/Score'
-import { TopNavbar } from '../About'
+import { TopNavbar } from 'src/components/About'
 import { SongInfoContext } from 'src/context/SongInfoContext'
-import { generateSong, saveSong, downloadSong } from '../../service/user.service'
-import { ErrorDialog, NoInternetDialog } from '../Dialog'
+import { generateSong, saveSong, downloadSong } from 'src/service/user.service'
+import { ErrorDialog, NoInternetDialog } from 'src/components/Dialog'
+import { DEFAULT_CLEF } from 'src/constants'
 
 import './index.css'
 
@@ -167,7 +168,7 @@ export function MainPage(props) {
         />
         <Score notes={notes}
           onDeleteNote={onDeleteNote}
-          firstClef={['treble', 'bass']}
+          firstClef={DEFAULT_CLEF}
           keySignature={keySignature}
         />
       </div>
