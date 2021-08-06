@@ -1,6 +1,5 @@
 import axios from 'axios'
-
-const API_URL = 'http://127.0.0.1:4000/'
+import { API_URL } from 'src/constants'
 
 export const register = (usrname, pwd, name) => {
   console.log('url', API_URL)

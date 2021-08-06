@@ -2,14 +2,12 @@ import React, {useEffect} from 'react'
 import { GenerateButton, DownloadButton, BackspaceButton, SemibreveBtn, 
   MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn, SaveButton } from '../Buttons'
 import { Form } from 'react-bootstrap'
+import { KEY_SIGNATURES, NOTE_RANGES, FIRST_NOTE  } from 'src/constants'
+
 
 import './index.css'
 
 const Toolbar = ({onChangeNote, onChangeStave, onChangeKeySn, onClickNote, onDownload, onGenerate, onSaveSong, onDeleteNote}) => { 
-  const keySignatures = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'F', 'B-', 'E-', 'A-',
-    'D-', 'G-', 'C-']
-  const noteRange = ['C/2', 'D/2', 'E/2', 'F/2', 'G/2', 'A/2', 'B/2', 'C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3',
-    'C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6']
 
   const handleOnChangeStave = (e) => {
     onChangeStave(Number(e.target.value))
@@ -24,7 +22,7 @@ const Toolbar = ({onChangeNote, onChangeStave, onChangeKeySn, onClickNote, onDow
   }
 
   useEffect(() => {
-    onChangeNote('C/2')
+    onChangeNote(FIRST_NOTE)
   }, [])
 
   return (
@@ -60,7 +58,7 @@ const Toolbar = ({onChangeNote, onChangeStave, onChangeKeySn, onClickNote, onDow
           <div className='form-item'>
             <Form.Label className="form-label">Key Signature</Form.Label>
             <Form.Control className="form-select" as="select" custom onChange={handleOnChangeKeySn}>
-              { keySignatures.map((v, idx) => {
+              { KEY_SIGNATURES.map((v, idx) => {
                 return <option key={idx}>{v}</option>
               })}
             </Form.Control>
@@ -69,7 +67,7 @@ const Toolbar = ({onChangeNote, onChangeStave, onChangeKeySn, onClickNote, onDow
           <div className='form-item'>
             <Form.Label className="form-label">Note</Form.Label>
             <Form.Control className="form-select" as="select" custom onChange={handleOnChangeNote}>
-              { noteRange.map((v, idx) => {
+              { NOTE_RANGES.map((v, idx) => {
                 return <option key={idx}>{v}</option>
               })}
             </Form.Control>
