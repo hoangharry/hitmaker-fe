@@ -25,7 +25,6 @@ export function Score(props) {
   mapDuration.set(6, '8d')
   const { song } = useContext(SongInfoContext)
   const history = useHistory()
-  
   if (song[0].timeSignature === undefined || song[0].timeSignature === '') {
     history.push('/init')
   }
@@ -193,7 +192,6 @@ export function Score(props) {
             note = 'B/3'
           }
           var leftDuration = beatsPerBar - tmpduration
-
           if (parseInt(v.dur) > leftDuration) {
             console.log('o tren duration', mapDuration.get(parseInt(leftDuration)) + 'r')
             if (mapDuration.get(leftDuration).includes('d')) {
@@ -258,7 +256,7 @@ export function Score(props) {
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
             prevStave = tmpStave
           }
-          while (catchRest > beatsPerBar) {
+          while (catchRest >= beatsPerBar) {
             if (curClef == 'treble') {
               note = 'B/5'
             } else if (curClef == 'alto') {
