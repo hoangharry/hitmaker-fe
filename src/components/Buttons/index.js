@@ -13,6 +13,9 @@ import minimLogo from 'src/pictures/minim.png'
 import quaverLogo from 'src/pictures/quaver.png'
 import semibreveLogo from 'src/pictures/semibreve.png'
 import semiquaverLogo from 'src/pictures/semiquaver.png'
+import quaverrestLogo from 'src/pictures/quaver-rest.png'
+import minimrestLogo from 'src/pictures/minim-rest.png'
+import crotchetrestLogo from 'src/pictures/crotchet-rest.png'
 
 import './index.css'
 
@@ -62,6 +65,21 @@ const DemisemiQuaverBtn = ({handleClick}) => {
   return <ToolbarButton onClick={onClick} imgSrc={demisemiquaverLogo}/>
 }
 
+const QuaverRestBtn = ({handleClick}) => {
+  const onClick = () => { handleClick('quaverrest') }
+  return <ToolbarButton onClick={onClick} imgSrc={quaverrestLogo}/>
+}
+
+const MinimRestBtn = ({handleClick}) => {
+  const onClick = () => { handleClick('minimrest') }
+  return <ToolbarButton onClick={onClick} imgSrc={minimrestLogo} className='minimrest'/>
+}
+
+const CrotchetRestBtn = ({handleClick}) => {
+  const onClick = () => { handleClick('crotchetrest') }
+  return <ToolbarButton onClick={onClick} imgSrc={crotchetrestLogo}/>
+}
+
 const PlayButton = ({handleClick}) => {
   return <ToolbarButton onClick={handleClick} imgSrc={playIcon}/>
 }
@@ -96,4 +114,7 @@ export {
   QuaverBtn,
   SemibreveBtn,
   DemisemiQuaverBtn,
+  QuaverRestBtn,
+  CrotchetRestBtn, 
+  MinimRestBtn
 }

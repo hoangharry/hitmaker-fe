@@ -3,65 +3,39 @@ import React, { useContext, useEffect, useState} from 'react'
 import {ExceedNotesDialog} from 'src/components/Dialog'
 import { SongInfoContext } from 'src/context/SongInfoContext'
 import { useHistory } from 'react-router-dom'
+import { getBeatPerBar, getRemainBeats } from 'src/utils'
+import { MAP_DURATION, TREB_NOTES, ALTO_NOTES, BASS_NOTES } from 'src/constants'
 
 import './index.css'
 
 export function Score(props) {
   const VF = Vex.Flow
   const [showModal, setShowModal] = useState(false)
-  let mapDuration = new Map()
-  // mapDuration.set(32, 'w')
-  // mapDuration.set(16, 'h')
-  // mapDuration.set(8, 'q')
-  mapDuration.set(32, '1')
-  mapDuration.set(16, '2')
-  mapDuration.set(8, '4')
-  mapDuration.set(4, '8')
-  mapDuration.set(2, '16')
-  mapDuration.set(1, '32')
-  mapDuration.set(24, '2d')
-  mapDuration.set(12, '4d')
-  mapDuration.set(3, '16d')
-  mapDuration.set(6, '8d')
   const { song } = useContext(SongInfoContext)
   const history = useHistory()
-  if (song[0].timeSignature === undefined || song[0].timeSignature === '') {
-    history.push('/init')
-  }
 
-  console.log('song', song)
-  let beatsPerBar = 0
-  if (song[0].timeSignature === '4/4') {
-    beatsPerBar = 32
-  }
-  if (song[0].timeSignature === '3/4') {
-    beatsPerBar = 24
-  }
-  if (song[0].timeSignature === '2/4') {
-    beatsPerBar = 16
+  let timeSig = song[0].timeSignature
+  let beatsPerBar = getBeatPerBar(timeSig)
+  if (beatsPerBar === 0) {
+    history.push('/init')
   }
 
   const checkNotes = (notes) => {
     let numNotesAdd = 0
-    let sumDuration = 0
-    notes.forEach((e) => {
-      sumDuration += e.dur
-    })
-    if (sumDuration % beatsPerBar === 0) {
-    } else {
-      let remainder = Math.ceil(sumDuration/beatsPerBar)*beatsPerBar - sumDuration
+    let remainBeats = getRemainBeats(notes, beatsPerBar)
+    if (remainBeats !== 0) { 
       for (let i = 16; i !== 0; i = Math.trunc(i/2)) {
-        const quotient = Math.floor(remainder/i)
+        const quotient = Math.floor(remainBeats/i)
         if (quotient === 0) {
           continue
         } else {
           numNotesAdd += quotient
-          let duration = [...mapDuration.entries()].find(([k, v]) => k === i)[1]
+          let duration = [...MAP_DURATION.entries()].find(([k, v]) => k === i)[1]
           for (let j = 0; j < quotient; j++) {
             notes.push(new VF.StaveNote({keys: ['D/4'], duration: duration}))
           }
-          remainder %= i
-          if (remainder === 0) {
+          remainBeats %= i
+          if (remainBeats === 0) {
             break
           }
         }
@@ -69,10 +43,6 @@ export function Score(props) {
     }
     return {notes, numNotesAdd}
   }
-
-  const notesTreble = ['C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5', 'D/5', 'E/5', 'F/5', 'G/5', 'A/5', 'B/5', 'C/6']
-  const notesAlto = ['C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3', 'C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5']
-  const notesBass = ['C/2', 'D/2', 'E/2', 'F/2', 'G/2', 'A/2', 'B/2', 'C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3', 'C/4']
 
   const drawNotes = (staveN, context, svgContainer, props) => {
     const width = svgContainer.getBoundingClientRect().width
@@ -83,7 +53,7 @@ export function Score(props) {
       }
       notes = song[0].streamParts[staveN]
     }
-    if (notes.length === 0) {
+    if (notes.length === 0) { // init 2 stave
       var stave
       if (staveN === 1) {
         stave = new VF.Stave(10, 100, width)
@@ -112,21 +82,21 @@ export function Score(props) {
       var catchRest = 0
       notes.forEach((v, idx) => {
         console.log(v)
-        if (v.note) {
+        if (v.note) { // handle single note
           tmpduration += parseInt(v.dur)
           let tmpClefNotes
           if (curClef === 'treble') {
-            tmpClefNotes = notesTreble
+            tmpClefNotes = TREB_NOTES
           } else if (curClef === 'alto') {
-            tmpClefNotes = notesAlto
+            tmpClefNotes = ALTO_NOTES
           } else {
-            tmpClefNotes = notesBass
+            tmpClefNotes = BASS_NOTES
           }
           if (!tmpClefNotes.includes(v.note)) {
-            if (notesTreble.includes(v.note)) {
+            if (TREB_NOTES.includes(v.note)) {
               tmpNotes.push(new VF.ClefNote('treble'))
               curClef = 'treble'
-            } else if (notesAlto.includes(v.note)) {
+            } else if (ALTO_NOTES.includes(v.note)) {
               tmpNotes.push(new VF.ClefNote('alto'))
               curClef = 'alto'
             } else {
@@ -140,26 +110,26 @@ export function Score(props) {
               keySn = keySn.slice(0, -1) + 'b'
             }
           }
-          if (mapDuration.get(parseInt(v.dur)).includes('d')) {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
+          if (MAP_DURATION.get(parseInt(v.dur)).includes('d')) {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: MAP_DURATION.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
           } else {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: MAP_DURATION.get(parseInt(v.dur)), auto_stem: true}))
           }
-        } else if (v.chord) {
+        } else if (v.chord) {  // handle chord
           tmpduration += parseInt(v.dur)
           let tmpClefNotes
           if (curClef === 'treble') {
-            tmpClefNotes = notesTreble
+            tmpClefNotes = TREB_NOTES
           } else if (curClef === 'alto') {
-            tmpClefNotes = notesAlto
+            tmpClefNotes = ALTO_NOTES
           } else {
-            tmpClefNotes = notesBass
+            tmpClefNotes = BASS_NOTES
           }
           if (!tmpClefNotes.includes(v.chord[0].note)) {
-            if (notesTreble.includes(v.chord[0].note)) {
+            if (TREB_NOTES.includes(v.chord[0].note)) {
               tmpNotes.push(new VF.ClefNote('treble'))
               curClef = 'treble'
-            } else if (notesAlto.includes(v.chord[0].note)) {
+            } else if (ALTO_NOTES.includes(v.chord[0].note)) {
               tmpNotes.push(new VF.ClefNote('alto'))
               curClef = 'alto'
             } else {
@@ -177,37 +147,39 @@ export function Score(props) {
           v.chord.forEach((n) => {
             chordNote.push(n.note)
           })
-          if (mapDuration.get(parseInt(v.dur)).includes('d')) {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
+          if (MAP_DURATION.get(parseInt(v.dur)).includes('d')) {
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: MAP_DURATION.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
           } else {
-            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
+            tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: MAP_DURATION.get(parseInt(v.dur)), auto_stem: true}))
           }
-        } else {
+        } else { // handle rest note
           var  note
+          console.log(curClef)
           if (curClef == 'treble') {
-            note = 'B/5'
-          } else if (curClef == 'alto') {
             note = 'B/4'
+          } else if (curClef == 'alto') {
+            note = 'C/4'
           } else if (curClef == 'bass') {
-            note = 'B/3'
+            note = 'B/4' // it must be D/3
           }
+          console.log(note)
           var leftDuration = beatsPerBar - tmpduration
           if (parseInt(v.dur) > leftDuration) {
-            console.log('o tren duration', mapDuration.get(parseInt(leftDuration)) + 'r')
-            if (mapDuration.get(leftDuration).includes('d')) {
-              tmpNotes.push(new VF.StaveNote({keys: [note], duration: mapDuration.get(parseInt(leftDuration)) + 'r'}).addDotToAll())
+            console.log('o tren duration', MAP_DURATION.get(parseInt(leftDuration)) + 'r')
+            if (MAP_DURATION.get(leftDuration).includes('d')) {
+              tmpNotes.push(new VF.StaveNote({keys: [note], duration: MAP_DURATION.get(parseInt(leftDuration)) + 'r'}).addDotToAll())
             } else {
-              tmpNotes.push(new VF.StaveNote({keys: [note], duration: mapDuration.get(parseInt(leftDuration)) + 'r'}))
+              tmpNotes.push(new VF.StaveNote({keys: [note], duration: MAP_DURATION.get(parseInt(leftDuration)) + 'r'}))
             }
             catchRest = parseInt(v.dur) - leftDuration
             tmpduration = tmpduration + leftDuration
 
           } else {
             tmpduration += parseInt(v.dur)
-            if (mapDuration.get(parseInt(v.dur)).includes('d')) {
-              tmpNotes.push(new VF.StaveNote({keys: [note], duration: mapDuration.get(parseInt(v.dur)) + 'r'}).addDotToAll())
+            if (MAP_DURATION.get(parseInt(v.dur)).includes('d')) {
+              tmpNotes.push(new VF.StaveNote({keys: [note], duration: MAP_DURATION.get(parseInt(v.dur)) + 'r'}).addDotToAll())
             } else {
-              tmpNotes.push(new VF.StaveNote({keys: [note], duration: mapDuration.get(parseInt(v.dur)) + 'r'}))
+              tmpNotes.push(new VF.StaveNote({keys: [note], duration: MAP_DURATION.get(parseInt(v.dur)) + 'r'}))
             }
           }          
         }      
@@ -258,18 +230,18 @@ export function Score(props) {
           }
           while (catchRest >= beatsPerBar) {
             if (curClef == 'treble') {
-              note = 'B/5'
-            } else if (curClef == 'alto') {
               note = 'B/4'
+            } else if (curClef == 'alto') {
+              note = 'C/4'
             } else if (curClef == 'bass') {
-              note = 'B/3'
+              note = 'B/4'
             }
             tmpNotes = []
-            console.log('while duration', mapDuration.get(beatsPerBar) + 'r')
-            if (mapDuration.get(parseInt(beatsPerBar)).includes('d')) {
-              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: mapDuration.get(beatsPerBar) + 'r'}).addDotToAll())
+            console.log('while duration', MAP_DURATION.get(beatsPerBar) + 'r')
+            if (MAP_DURATION.get(parseInt(beatsPerBar)).includes('d')) {
+              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: MAP_DURATION.get(beatsPerBar) + 'r'}).addDotToAll())
             } else {
-              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: mapDuration.get(beatsPerBar) + 'r'}))
+              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: MAP_DURATION.get(beatsPerBar) + 'r'}))
             }
             const noteWidth = Math.trunc((width - (prevStave.x + prevStave.width) - 10)/1)
             if (noteWidth < 20) {
@@ -290,18 +262,18 @@ export function Score(props) {
           tmpduration = 0
           if (catchRest > 0) {
             if (curClef == 'treble') {
-              note = 'B/5'
-            } else if (curClef == 'alto') {
               note = 'B/4'
+            } else if (curClef == 'alto') {
+              note = 'C/4'
             } else if (curClef == 'bass') {
-              note = 'B/3'
+              note = 'B/4'
             }
             console.log('catchrest', catchRest)
-            console.log('catchrest rest', mapDuration.get(parseInt(catchRest)) + 'r')
-            if (mapDuration.get(catchRest).includes('d')) {
-              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: mapDuration.get(parseInt(catchRest)) + 'r'}).addDotToAll())
+            console.log('catchrest rest', MAP_DURATION.get(parseInt(catchRest)) + 'r')
+            if (MAP_DURATION.get(catchRest).includes('d')) {
+              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: MAP_DURATION.get(parseInt(catchRest)) + 'r'}).addDotToAll())
             } else {
-              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: mapDuration.get(parseInt(catchRest)) + 'r'}))
+              tmpNotes.push(new VF.StaveNote({ keys: [note], duration: MAP_DURATION.get(parseInt(catchRest)) + 'r'}))
             }
             tmpduration = catchRest
             catchRest = 0
@@ -350,6 +322,7 @@ export function Score(props) {
     
 
   useEffect(() => {
+    console.log('run effect')
     document.getElementById('new-song').innerHTML = ''
     var notesProp = props.notes
     const svgContainer = document.getElementById('new-song')

@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react'
 import { GenerateButton, DownloadButton, BackspaceButton, SemibreveBtn, 
-  MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn, SaveButton } from '../Buttons'
+  MinimBtn, CrotchetBtn, QuaverBtn, SemiQuaverBtn, DemisemiQuaverBtn,
+  SaveButton, QuaverRestBtn, MinimRestBtn, CrotchetRestBtn } from '../Buttons'
 import { Form } from 'react-bootstrap'
 import { KEY_SIGNATURES, NOTE_RANGES, FIRST_NOTE  } from 'src/constants'
 
@@ -93,6 +94,16 @@ const Toolbar = ({onChangeNote, onChangeStave, onChangeKeySn, onClickNote, onDow
           <CrotchetBtn handleClick={onClickNote}/>
           <SemiQuaverBtn handleClick={onClickNote}/>
           <DemisemiQuaverBtn handleClick={onClickNote}/>
+        </div>                    
+      </div>
+
+      <div className='spacing'/>
+
+      <div className='button-toolbar'>                
+        <div className='button-group'>
+          <MinimRestBtn handleClick={onClickNote}/>
+          <CrotchetRestBtn handleClick={onClickNote}/>
+          <QuaverRestBtn handleClick={onClickNote}/>
         </div>                    
       </div>
     </div>

@@ -10,7 +10,7 @@ import { DEFAULT_CLEF } from 'src/constants'
 import './index.css'
 
 export function MainPage(props) {
-  const [notes, setNotes] = useState([[], []])
+  const [notes, setNotes] = useState([[],[]])
   const [curNote, setCurNote] = useState('')
   const [stave, setStave] = useState(0)
   const [keySignature, setKeysignature] = useState('C')
@@ -20,21 +20,22 @@ export function MainPage(props) {
 
   const onClickNote = (noteType) => {
     let tmpNote = notes[stave]
-    var note = {
-      note: curNote,
-    }
+    var note = {}
     if (noteType === 'semibreve') {
       note.dur = 32 
-    } else if (noteType === 'minim') {
+    } else if (noteType === 'minim' || noteType === 'minimrest') {
       note.dur = 16
-    } else if (noteType === 'quaver') {
+    } else if (noteType === 'quaver' || noteType === 'crotchetrest') {
       note.dur = 8
-    } else if (noteType === 'crotchet') {
+    } else if (noteType === 'crotchet' || noteType === 'quaverrest') {
       note.dur = 4
     } else if (noteType === 'semiquaver') {
       note.dur = 2
     } else if (noteType === 'demisemiquaver') {
       note.dur = 1
+    }
+    if (!['minimrest', 'crotchetrest', 'quaverrest'].includes(noteType)) {
+      note.note = curNote
     }
     tmpNote = tmpNote.concat(note)
     if (stave === 0) {
