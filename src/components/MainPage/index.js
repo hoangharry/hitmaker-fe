@@ -21,7 +21,7 @@ export function MainPage(props) {
   const onClickNote = (noteType) => {
     let tmpNote = notes[stave]
     var note = {}
-    if (noteType === 'semibreve') {
+    if (noteType === 'semibreve' || noteType === 'semibreverest') {
       note.dur = 32 
     } else if (noteType === 'minim' || noteType === 'minimrest') {
       note.dur = 16
@@ -29,12 +29,12 @@ export function MainPage(props) {
       note.dur = 8
     } else if (noteType === 'crotchet' || noteType === 'quaverrest') {
       note.dur = 4
-    } else if (noteType === 'semiquaver') {
+    } else if (noteType === 'semiquaver' || noteType === 'semiquaverrest' ) {
       note.dur = 2
-    } else if (noteType === 'demisemiquaver') {
+    } else if (noteType === 'demisemiquaver' || noteType === 'demisemiquaverrest') {
       note.dur = 1
     }
-    if (!['minimrest', 'crotchetrest', 'quaverrest'].includes(noteType)) {
+    if (!noteType.includes('rest')) {
       note.note = curNote
     }
     tmpNote = tmpNote.concat(note)
