@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import Toolbar from 'src/components/Toolbar'
 import {Score} from 'src/components/Score'
+import Loading from 'src/components/Loading'
 import { TopNavbar } from 'src/components/About'
 import { SongInfoContext } from 'src/context/SongInfoContext'
 import { generateSong, saveSong, downloadSong } from 'src/service/user.service'
@@ -10,6 +11,7 @@ import { DEFAULT_CLEF } from 'src/constants'
 import './index.css'
 
 export function MainPage(props) {
+  const [showLoading, setShowLoading] = useState(false)
   const [notes, setNotes] = useState([[], []])
   const [curNote, setCurNote] = useState('')
   const [stave, setStave] = useState(0)
@@ -61,21 +63,27 @@ export function MainPage(props) {
     if (!window.navigator.onLine) {
       setIsShowNoConn(true)
     }
-    generateSong(song[0].timeSignature, song[0].keySignature, notes).then((response) => {
-      console.log('res', response)
-      if (response.status === 200) {
-        console.log('from gen', response.data)
-        var tmp = response.data
-        tmp.saveName = song[0].saveName
-        handleSong([tmp])
-        setNotes([[], []])
-      } else {
+    else {
+      setShowLoading(true)
+      generateSong(song[0].timeSignature, song[0].keySignature, notes).then((response) => {
+        console.log('res', response)
+        if (response.status === 200) {
+          console.log('from gen', response.data)
+          var tmp = response.data
+          tmp.saveName = song[0].saveName
+          handleSong([tmp])
+          setNotes([[], []])
+          setShowLoading(false)
+        } else {
+          setShowLoading(false)
+          setIsShowErr(true)
+        }
+      }).catch((err) => {
+        setShowLoading(false)
         setIsShowErr(true)
-      }
-    }).catch((err) => {
-      setIsShowErr(true)
-      console.log(err)
-    })
+        console.log(err)
+      })
+    }
   }
 
   const onChangeKeySn = (keysn) => {
@@ -108,30 +116,33 @@ export function MainPage(props) {
   }
 
   return (
-    <>  
+    <> 
       <ErrorDialog
         show={isShowErr}
         onHide = {() => setIsShowErr(false)}/>
       <NoInternetDialog
         show = {isShowNoConn}
         onHide = {() => setIsShowNoConn(false)}/>
-      <TopNavbar/>
-      <div className="main-page-container">
-        <Toolbar
-          onClickNote={onClickNote}
-          onChangeNote={onChangeNote}
-          onDeleteNote={onDeleteNote}
-          onGenerate={onGenerate}
-          onDownload={onDownload}  
-          onChangeKeySn={onChangeKeySn}
-          onChangeStave={onChangeStave}  
-          onSaveSong={onSaveSong}               
-        />
-        <Score notes={notes}
-          onDeleteNote={onDeleteNote}
-          firstClef={DEFAULT_CLEF}
-          keySignature={keySignature}
-        />
+      <div div className="main-page-container">
+        {showLoading && <Loading />}
+        <TopNavbar/>
+        <div className="main-page">
+          <Toolbar
+            onClickNote={onClickNote}
+            onChangeNote={onChangeNote}
+            onDeleteNote={onDeleteNote}
+            onGenerate={onGenerate}
+            onDownload={onDownload}  
+            onChangeKeySn={onChangeKeySn}
+            onChangeStave={onChangeStave}  
+            onSaveSong={onSaveSong}               
+          />
+          <Score notes={notes}
+            onDeleteNote={onDeleteNote}
+            firstClef={DEFAULT_CLEF}
+            keySignature={keySignature}
+          />
+        </div>
       </div>
     </>
   )
