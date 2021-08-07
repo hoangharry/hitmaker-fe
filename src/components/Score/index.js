@@ -1,5 +1,5 @@
 import Vex from 'vexflow'
-import React, { useContext, useEffect, useState} from 'react'
+import React, { lazy, useContext, useEffect, useState} from 'react'
 import {ExceedNotesDialog} from 'src/components/Dialog'
 import { SongInfoContext } from 'src/context/SongInfoContext'
 import { useHistory } from 'react-router-dom'
@@ -10,9 +10,6 @@ export function Score(props) {
   const VF = Vex.Flow
   const [showModal, setShowModal] = useState(false)
   let mapDuration = new Map()
-  // mapDuration.set(32, 'w')
-  // mapDuration.set(16, 'h')
-  // mapDuration.set(8, 'q')
   mapDuration.set(32, '1')
   mapDuration.set(16, '2')
   mapDuration.set(8, '4')
@@ -25,7 +22,8 @@ export function Score(props) {
   mapDuration.set(6, '8d')
   const { song } = useContext(SongInfoContext)
   const history = useHistory()
-  if (song[0].timeSignature === undefined || song[0].timeSignature === '') {
+  if (song === undefined || song[0] === undefined ||
+      song[0].timeSignature === undefined || song[0].timeSignature === '') {
     history.push('/init')
   }
 
@@ -110,6 +108,8 @@ export function Score(props) {
       var isFisrt = true
       var keySn = ''
       var catchRest = 0
+      var ties = []
+      var tieInfo = {f: null, l: null}
       notes.forEach((v, idx) => {
         console.log(v)
         if (v.note) {
@@ -144,6 +144,16 @@ export function Score(props) {
             tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}).addDotToAll())
           } else {
             tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [v.note], duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
+          }
+          if (v.tie == 'start') {
+            tieInfo.f = tmpNotes[tmpNotes.length -1]
+          } else if (v.tie == 'stop') {
+            tieInfo.l = tmpNotes[tmpNotes.length - 1]
+            ties.push(new VF.StaveTie({
+              first_note: tieInfo.f,
+              last_note: tieInfo.l
+            }))
+            tieInfo = {f: null, l: null}
           }
         } else if (v.chord) {
           tmpduration += parseInt(v.dur)
@@ -182,8 +192,20 @@ export function Score(props) {
           } else {
             tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: chordNote, duration: mapDuration.get(parseInt(v.dur)), auto_stem: true}))
           }
+          v.chord.forEach((n) => {
+            if (n.tie == 'start') {
+              tieInfo.f = tmpNotes[tmpNotes.length -1]
+            } else if (n.tie == 'stop') {
+              tieInfo.l = tmpNotes[tmpNotes.length - 1]
+              ties.push(new VF.StaveTie({
+                first_note: tieInfo.f,
+                last_note: tieInfo.l
+              }))
+              tieInfo = {f: null, l: null}
+            }
+          })
         } else {
-          var  note
+          var note = ''
           if (curClef == 'treble') {
             note = 'B/4'
           } else if (curClef == 'alto') {
@@ -192,6 +214,8 @@ export function Score(props) {
             note = 'D/3'
           }
           var leftDuration = beatsPerBar - tmpduration
+          console.log('leftDuration', leftDuration)
+          console.log('tmodur', tmpduration)
           if (parseInt(v.dur) > leftDuration) {
             console.log('o tren duration', mapDuration.get(parseInt(leftDuration)) + 'r')
             if (mapDuration.get(leftDuration).includes('d')) {
@@ -229,18 +253,24 @@ export function Score(props) {
               }
               tmpStave.addKeySignature(keySnSong)
             }
+            // draw beam and all stave
+            var beams = VF.Beam.generateBeams(tmpNotes)
             tmpStave.setContext(context).draw()
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
+            beams.forEach((b) => b.setContext(context).draw())
             prevStave = tmpStave
             isFisrt = false
           } else {
             const noteWidth = Math.trunc((width - (prevStave.x + prevStave.width) - 10)/tmpNotes.length)
+            l = tmpNotes.length > 4 ? tmpNotes.length*50 : tmpNotes.length*50 + 100
             if (noteWidth < 20) {
               staveX = 10
               staveY += 200
               tmpStave = new VF.Stave(staveX, staveY, tmpNotes.length*50).addClef(curClef).addTimeSignature(song[0].timeSignature)
             } else if (noteWidth < 50) {
               tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*noteWidth)
+            } else if (tmpNotes.length < 3) {
+              tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, l)
             } else {
               tmpStave = new VF.Stave(prevStave.width + prevStave.x, staveY, tmpNotes.length*50)
             }
@@ -248,12 +278,11 @@ export function Score(props) {
               tmpStave.addKeySignature(keySn)
               keySn = ''
             }
-            // var beams = VF.Beam.generateBeams(tmpNotes)
-            // beams.forEach(function (b) {
-            //   b.setContext(context).draw()
-            // })
+            // draw beam and all stave
+            beams = VF.Beam.generateBeams(tmpNotes)
             tmpStave.setContext(context).draw()
             VF.Formatter.FormatAndDraw(context, tmpStave, tmpNotes)
+            beams.forEach((b) => b.setContext(context).draw())
             prevStave = tmpStave
           }
           while (catchRest >= beatsPerBar) {
@@ -304,6 +333,7 @@ export function Score(props) {
               tmpNotes.push(new VF.StaveNote({ clef: curClef, keys: [note], duration: mapDuration.get(parseInt(catchRest)) + 'r'}))
             }
             tmpduration = catchRest
+            console.log('tmpduration catchRest', tmpduration)
             catchRest = 0
           }
         } else {          
@@ -344,6 +374,8 @@ export function Score(props) {
           }                
         }
       })
+      console.log('ties', ties)
+      ties.forEach(function(b) {b.setContext(context).draw()})
     }
   }
 
@@ -358,79 +390,6 @@ export function Score(props) {
     const width = svgContainer.getBoundingClientRect().width
     renderer.resize(width, 1000)
     var context = renderer.getContext()
-
-    // Create and draw the tablature stave
-    // var stave = new Vex.Flow.Stave(10, 0, 500).addClef('treble').addTimeSignature('4/4')
-    // var stave2 = new Vex.Flow.Stave(10, 100, 500).addClef('treble').addTimeSignature('4/4')
-    // var notes1 = [new Vex.Flow.StaveNote({keys: ['b/4'],duration: '1r'})]
-    // stave.setContext(context).draw()
-    // VF.Formatter.FormatAndDraw(context, stave, notes1)
-
-    // // Create some notes
-    // var notes1 = [
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4"}),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4"}),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4"}),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4"}),
-    // ];
-    // notes1[0].addArticulation(0, new VF.Articulation('a.'));
-    // const tie = [
-    //     new VF.StaveTie({
-    //         first_note: null,
-    //         last_note: notes1[0]
-    //         // first_indices: [0, 1],
-    //         // last_indices: [0, 1]
-    //     })
-    // ]
-    // var notes1 = [
-    //     new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: 'wr' }).addDotToAll(),
-    // new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: 'hr' }).addDotToAll(),
-    // new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: '4r' }).addDotToAll(),
-    // new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: '8r' }).addDotToAll(),
-    // new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: '16r' }).addDotToAll(),
-    // new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: '32r' }).addDotToAll(),
-    // new VF.StaveNote({ keys: ['b/4'], stem_direction: 1, duration: '64r' }).addDotToAll(),
-    // ]
-    // var notes2 = [
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "8"}).addAccidental(0, new VF.Accidental('n')),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "8"}),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "8"}),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4", stem_direction: -1}),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4d"}).addDotToAll(),
-    //   new Vex.Flow.StaveNote({keys: ["c/4"],duration: "4"}),
-    // ];
-    // console.log('note1', notes1[0].intrinsicTicks);
-    // const a = notes1.filter((note) => note.intrinsicTicks < 4096);
-    // console.log('a',a)
-    // const b = notes2.filter((note) => note.intrinsicTicks < 4096);
-    // // var beams = [
-    //     // new VF.Beam(a),
-    //     // new VF.Beam(b)];
-    // var voice1 = new Vex.Flow.Voice({
-    //    num_beats: 4,
-    //    beat_value: 4,
-    //    resolution: Vex.Flow.RESOLUTION
-    // });
-
-    //  var voice2 = new Vex.Flow.Voice({
-    //    num_beats: 4,
-    //    beat_value: 4,
-    //    resolution: Vex.Flow.RESOLUTION
-    // });
-
-
-    // voice1.addTickables(notes1);
-    // voice2.addTickables(notes2);
-
-
-    // var formatter = new Vex.Flow.Formatter().format([voice2,voice1], 500);
-
-    // stave.setContext(context).draw({auto_beam: true});
-    // stave2.setContext(context).draw({auto_beam: true});
-    // voice1.draw(context, stave)
-    // voice2.draw(context, stave2)
-    // tie.forEach(function(b) {b.setContext(context).draw()})
-    // beams.forEach(function(b) {b.setContext(context).draw()});
     drawNotes(0, context, svgContainer, props)
     drawNotes(1, context, svgContainer, props)
   })
