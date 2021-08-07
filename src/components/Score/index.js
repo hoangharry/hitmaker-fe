@@ -10,9 +10,6 @@ export function Score(props) {
   const VF = Vex.Flow
   const [showModal, setShowModal] = useState(false)
   let mapDuration = new Map()
-  // mapDuration.set(32, 'w')
-  // mapDuration.set(16, 'h')
-  // mapDuration.set(8, 'q')
   mapDuration.set(32, '1')
   mapDuration.set(16, '2')
   mapDuration.set(8, '4')
@@ -393,75 +390,6 @@ export function Score(props) {
     const width = svgContainer.getBoundingClientRect().width
     renderer.resize(width, 1000)
     var context = renderer.getContext()
-
-    // Create and draw the tablature stave
-    // var stave = new Vex.Flow.Stave(10, 0, 500).addClef('treble').addTimeSignature('4/4')
-    // var stave2 = new Vex.Flow.Stave(10, 100, 500).addClef('treble').addTimeSignature('4/4')
-
-
-    // // // // Create some notes
-    // var notes1 = [
-    //   new Vex.Flow.StaveNote({keys: ['c/4', 'd/4', 'a/4'],duration: '4'}),
-    //   new Vex.Flow.StaveNote({keys: ['c/4', 'a/4'],duration: '4'}),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '4'}),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '4'}),
-    // ]
-    // // // notes1[0].addArticulation(0, new VF.Articulation('a.'));
-    // const tie = [
-    //   new VF.StaveTie({
-    //     first_note: notes1[0],
-    //     last_note: notes1[1],
-    //     // first_indices: [0, 1],
-    //     // last_indices: [0, 1]
-    //   })
-    // ]
-    // var notes2 = [
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '8'}).addAccidental(0, new VF.Accidental('n')),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '8'}),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '8'}),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '4', stem_direction: -1}),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '4d'}).addDotToAll(),
-    //   new Vex.Flow.StaveNote({keys: ['c/4'],duration: '4'}),
-    // ]
-    // console.log('note1', notes1[0].intrinsicTicks)
-    // const a = notes1.filter((note) => note.intrinsicTicks < 4096)
-    // console.log('a',a)
-    // const b = notes2.filter((note) => note.intrinsicTicks < 4096)
-
-    // var beams = [
-    //   // new VF.Beam(a),
-    //   new VF.Beam(b)]
-    // var beam = new VF.Beam(b)
-    // var voice1 = new Vex.Flow.Voice({
-    //   num_beats: 4,
-    //   beat_value: 4,
-    //   resolution: Vex.Flow.RESOLUTION
-    // })
-
-    // var voice2 = new Vex.Flow.Voice({
-    //   num_beats: 4,
-    //   beat_value: 4,
-    //   resolution: Vex.Flow.RESOLUTION
-    // })
-
-
-    // voice1.addTickables(notes1)
-    // voice2.addTickables(notes2)
-
-
-    // var formatter = new Vex.Flow.Formatter().format([voice2,voice1], 500);
-
-    // stave.setContext(context).draw({auto_beam: true})
-    // stave2.setContext(context).draw({auto_beam: true})
-    // stave.setContext(context).draw()
-    // stave2.setContext(context).draw()
-    // VF.Formatter.FormatAndDraw(context, stave, notes1)
-    // VF.Formatter.FormatAndDraw(context, stave2, notes2)
-    // voice1.draw(context, stave)
-    // voice2.draw(context, stave2)
-    // tie.forEach(function(b) {b.setContext(context).draw()})
-    // beams.forEach(function(b) {b.setContext(context).draw()})
-    // beam.setContext(context).draw()
     drawNotes(0, context, svgContainer, props)
     drawNotes(1, context, svgContainer, props)
   })
@@ -473,7 +401,7 @@ export function Score(props) {
         onHide={() => setShowModal(false)}
       />
       <div className="song-container">
-        {/* <h5 className="song-title" >{song[0].saveName}</h5> */}
+        <h5 className="song-title" >{song[0].saveName}</h5>
         <div className="song-content" id="new-song"></div>
       </div>
     </>
