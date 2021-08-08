@@ -1,48 +1,47 @@
-
 import './App.css'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { useContext, useEffect } from 'react'
+import { Switch, Route, useHistory, useLocation } from 'react-router-dom'
 import { InitDialog } from './components/Dialog'
 import { MainPage } from './components/MainPage'
 import { About } from './components/About'
 import { SignUp } from './components/Signup'
 import { Login } from './components/Login'
 import { UserPage } from './components/UserPage'
+import { SongInfoContext } from 'src/context/SongInfoContext'
 
 function App() {
+  const history = useHistory()
+  const location = useLocation()
+  const excludedPath = ['/signup', '/login']
+  const {isLogin} = useContext(SongInfoContext)
+
+  useEffect(() => {
+    if (!isLogin && !excludedPath.includes(location.pathname)) {
+      history.push('/')
+    }
+  }, [])
+
   return (
-    <BrowserRouter>
-      <Switch>
-        {/* <Route exact path='/'>
-            {  input.author === '' ? <InitDialog/> : <MainPage/>}           
-            
-          </Route>
-          <Route path='/about'>
-            <About/>
-          </Route> */}
-        <Route exact path='/'>
-          <About/>
-        </Route>
-        <Route path='/signup'>
-          <SignUp/>
-        </Route>
-        <Route path='/login'>
-          <Login/>
-        </Route>
-        <Route path='/init'>
-          <InitDialog/>
-        </Route>
-        <Route path='/song'>
-          <MainPage/>
-        </Route>
-        <Route path='/user'>
-          <UserPage/>
-        </Route>
-          
-          
-          
-          
-      </Switch>
-    </BrowserRouter>
+    <Switch>
+      <Route exact path='/'>
+        <About/>
+      </Route>
+      <Route path='/signup'>
+        <SignUp/>
+      </Route>
+      <Route path='/login'>
+        <Login/>
+      </Route>
+      <Route path='/init'>
+        <InitDialog/>
+      </Route>
+      <Route path='/song'>
+        <MainPage/>
+      </Route>
+      <Route path='/user'>
+        <UserPage/>
+      </Route>
+    </Switch>
   )
 }
 
