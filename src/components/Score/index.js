@@ -8,6 +8,7 @@ import './index.css'
 
 export function Score(props) {
   const VF = Vex.Flow
+  const history = useHistory()
   const [showModal, setShowModal] = useState(false)
   let mapDuration = new Map()
   mapDuration.set(32, '1')
@@ -20,26 +21,20 @@ export function Score(props) {
   mapDuration.set(12, '4d')
   mapDuration.set(3, '16d')
   mapDuration.set(6, '8d')
-  const { song } = useContext(SongInfoContext)
-  const history = useHistory()
-  if (song === undefined || song[0] === undefined ||
-      song[0].timeSignature === undefined || song[0].timeSignature === '') {
-    history.push('/init')
+  const { isLogin, song } = useContext(SongInfoContext)
+  const getBeatPerBar = () => {
+    if (song[0].timeSignature === '4/4') {
+      return 32
+    }
+    if (song[0].timeSignature === '3/4') {
+      return 24
+    }
+    if (song[0].timeSignature === '2/4') {
+      return 16
+    }
   }
 
-  console.log('song', song)
-  let beatsPerBar = 0
-  if (song[0].timeSignature === '4/4') {
-    beatsPerBar = 32
-  }
-  if (song[0].timeSignature === '3/4') {
-    beatsPerBar = 24
-  }
-  if (song[0].timeSignature === '2/4') {
-    beatsPerBar = 16
-  }
-
-  const checkNotes = (notes) => {
+  const checkNotes = (notes, beatsPerBar) => {
     let numNotesAdd = 0
     let sumDuration = 0
     notes.forEach((e) => {
@@ -72,7 +67,7 @@ export function Score(props) {
   const notesAlto = ['C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3', 'C/4', 'D/4', 'E/4', 'F/4', 'G/4', 'A/4', 'B/4', 'C/5']
   const notesBass = ['C/2', 'D/2', 'E/2', 'F/2', 'G/2', 'A/2', 'B/2', 'C/3', 'D/3', 'E/3', 'F/3', 'G/3', 'A/3', 'B/3', 'C/4']
 
-  const drawNotes = (staveN, context, svgContainer, props) => {
+  const drawNotes = (staveN, context, svgContainer, props, beatsPerBar) => {
     const width = svgContainer.getBoundingClientRect().width
     let notes = props.notes[staveN]
     if (song[0].streamParts[staveN] !== undefined) {
@@ -338,7 +333,7 @@ export function Score(props) {
           }
         } else {          
           if (idx === notes.length - 1) {
-            var lastStave = checkNotes(tmpNotes)
+            var lastStave = checkNotes(tmpNotes, beatsPerBar)
             if (isFisrt) {
               l = tmpNotes.length > 4 ? tmpNotes.length*50 : tmpNotes.length*50 + 100
               tmpStave = new VF.Stave(staveX, staveY, l)
@@ -379,31 +374,44 @@ export function Score(props) {
     }
   }
 
-    
-
   useEffect(() => {
-    document.getElementById('new-song').innerHTML = ''
-    var notesProp = props.notes
-    const svgContainer = document.getElementById('new-song')
-        
-    var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG)
-    const width = svgContainer.getBoundingClientRect().width
-    renderer.resize(width, 1000)
-    var context = renderer.getContext()
-    drawNotes(0, context, svgContainer, props)
-    drawNotes(1, context, svgContainer, props)
-  })
+    if (!isLogin) {
+      history.push('/login')
+    } else {
+      if (song === undefined ||  song[0] === undefined ||
+        song[0].timeSignature === undefined || song[0].timeSignature === '') {
+        history.push('/init')
+      } else {
+        const beatsPerBar = getBeatPerBar()
+        document.getElementById('new-song').innerHTML = ''
+        var notesProp = props.notes
+        const svgContainer = document.getElementById('new-song')
+            
+        var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG)
+        const width = svgContainer.getBoundingClientRect().width
+        renderer.resize(width, 1000)
+        var context = renderer.getContext()
+        drawNotes(0, context, svgContainer, props, beatsPerBar)
+        drawNotes(1, context, svgContainer, props, beatsPerBar)
+      }
+    }
+  }, [])
 
   return (
     <>
-      <ExceedNotesDialog
-        show={showModal}
-        onHide={() => setShowModal(false)}
-      />
-      <div className="song-container">
-        <h5 className="song-title" >{song[0].saveName}</h5>
-        <div className="song-content" id="new-song"></div>
-      </div>
+      {
+        song[0] !== undefined  &&
+        <> 
+          <ExceedNotesDialog
+            show={showModal}
+            onHide={() => setShowModal(false)}
+          />
+          <div className="song-container">
+            <h5 className="song-title" >{song[0] === undefined ? '': song[0].saveName}</h5>
+            <div className="song-content" id="new-song"></div>
+          </div>
+        </>
+      } 
     </>
   )
 }
