@@ -26,9 +26,6 @@ function App() {
         history.push('/')
       }
     }
-    // if (!isLogin && !excludedPath.includes(location.pathname)) {
-    //   history.push('/')
-    // }
   }, [])
 
   return (
