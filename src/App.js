@@ -15,12 +15,20 @@ function App() {
   const location = useLocation()
   const excludedPath = ['/signup', '/login']
   const name = sessionStorage.getItem('name')
-  const isLogin = name !== 'undefined'
+  const {song} = useContext(SongInfoContext)
+  const isLogin = name !== 'undefined' && name !== null
 
   useEffect(() => {
-    if (!isLogin && !excludedPath.includes(location.pathname)) {
-      history.push('/')
+    if (isLogin && location.pathname === '/song' && song.length === 0) {
+      history.push('/init')
+    } else {
+      if (!isLogin && !excludedPath.includes(location.pathname)) {
+        history.push('/')
+      }
     }
+    // if (!isLogin && !excludedPath.includes(location.pathname)) {
+    //   history.push('/')
+    // }
   }, [])
 
   return (

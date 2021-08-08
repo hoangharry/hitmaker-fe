@@ -39,18 +39,17 @@ export const SongInfoContextProvider = (props) => {
   useEffect(() => {
     const userName = sessionStorage.getItem('name')
     console.log(userName)
-    if (userName !== 'undefined') {
+    if (userName !== 'undefined' && userName !== null) {
       setNameUsr(userName)
       setIsLogin(true)
     }
     const title = localStorage.getItem('title')
     const timeSignature = localStorage.getItem('timeSignature')
     const keySignature = localStorage.getItem('keySignature')
-    console.log(title, timeSignature, keySignature)
     if (
-      title !== 'null' &&
-      timeSignature !== 'null' &&
-      keySignature !== 'null'
+      title !== null && title !== 'undefined' &&
+      timeSignature !== null && timeSignature !== 'undefined' &&
+      keySignature !== null && keySignature !== 'undefined' 
     ) {
       handleInput(title, timeSignature, keySignature)
     }
@@ -64,7 +63,6 @@ export const SongInfoContextProvider = (props) => {
   }
 
   const login = (username, token) => {
-    console.log('==========')
     sessionStorage.setItem('name', username)
     sessionStorage.setItem('token', token)
     setNameUsr(username)

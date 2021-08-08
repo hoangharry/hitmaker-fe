@@ -21,7 +21,7 @@ export function Score(props) {
   mapDuration.set(12, '4d')
   mapDuration.set(3, '16d')
   mapDuration.set(6, '8d')
-  const { isLogin, song, input } = useContext(SongInfoContext)
+  const { song, input } = useContext(SongInfoContext)
   const getBeatPerBar = () => {
     if (song[0].timeSignature === '4/4') {
       return 32
@@ -375,9 +375,7 @@ export function Score(props) {
   }
 
   useEffect(() => {
-    if (input.title === '') {
-      history.push('/init')
-    } else {
+    if (song[0] !== undefined) {
       const beatsPerBar = getBeatPerBar()
       document.getElementById('new-song').innerHTML = ''
       const svgContainer = document.getElementById('new-song')
@@ -389,13 +387,12 @@ export function Score(props) {
       drawNotes(0, context, svgContainer, props, beatsPerBar)
       drawNotes(1, context, svgContainer, props, beatsPerBar)
     }
-    
-  }, [])
+  }, [props.notes, song])
 
   return (
     <>
       {
-        input.title !== ''  &&
+        song[0] !== undefined  &&
         <> 
           <ExceedNotesDialog
             show={showModal}

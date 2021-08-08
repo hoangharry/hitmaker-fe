@@ -10,7 +10,6 @@ import './index.css'
 export function About() {
   const history = useHistory()
   const {isLogin, nameUsr} = useContext(SongInfoContext)
-  console.log(isLogin, nameUsr)
   return (
     <>
       <TopNavbar/>
