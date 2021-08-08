@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Form, Button, Container, Modal } from 'react-bootstrap'
+import { Form, Container, Modal } from 'react-bootstrap'
+import Button from 'src/components/common/Button'
 import { TopNavbar } from './About'
 import { register } from '../service/auth.service'
 import { useHistory } from 'react-router'

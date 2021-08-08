@@ -11,11 +11,6 @@
   overflow-x: hidden;
 }
 
-.hit-maker-logo {
-  font-size: 32px;
-  width: 60px;
-}
-
 @media (max-width: 768px) {
   .main-page-container {
     flex-direction: column;

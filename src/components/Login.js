@@ -1,16 +1,17 @@
 import { useState, useContext } from 'react'
-import { Form, Button, Container } from 'react-bootstrap'
+import { Form, Container } from 'react-bootstrap'
 import { TopNavbar } from './About'
 import { login } from '../service/auth.service'
 import { useHistory } from 'react-router-dom'
 import { SongInfoContext } from '../context/SongInfoContext'
+import Button from 'src/components/common/Button'
 
 export function Login() {
   const history = useHistory()
   const [userName, setUserName] = useState('')
   const [pwd, setPwd] = useState('')
   const [err, setErr] = useState('')
-  const { handleNameUsr, handleSong, nameUsr } = useContext(SongInfoContext)
+  const { login: onLogin, handleSong } = useContext(SongInfoContext)
 
   const handleOnCLick = (e) => {
     e.preventDefault()
@@ -25,12 +26,9 @@ export function Login() {
     login(userName, pwd).then((response) => {
       console.log('res', response)
       if (response.status === 201) {
-        sessionStorage.setItem('token', response.data.token)
-        sessionStorage.setItem('name', response.data.name)
+        onLogin(response.data.name, response.data.token)
         handleSong(response.data.data)
-        // handleNameUsr(response.data.name)
-        // console.log('nameUsr', nameUsr)
-        history.push('/user')
+        history.push('/')
       } else {
         setErr('cannotlogin')
       }       
@@ -59,9 +57,9 @@ export function Login() {
             <Form.Control type="text" placeholder="Enter username" onChange={(e) => checkUserName(e.target.value)} />
             {
               err === 'usr' && 
-               <Form.Text className="text-muted">
-                   Please enter username
-               </Form.Text>
+                <Form.Text className="text-muted">
+                    Please enter username
+                </Form.Text>
             }
           </Form.Group>
 

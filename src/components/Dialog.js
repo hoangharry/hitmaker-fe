@@ -1,7 +1,9 @@
 import { useContext, useState } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { Modal, Form } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { SongInfoContext } from '../context/SongInfoContext'
+import Button from 'src/components/common/Button'
+
 export function ExceedNotesDialog(props) {
 
   return (
@@ -30,24 +32,28 @@ export function ExceedNotesDialog(props) {
 
 export const InitDialog = () => {
   const [timeSignature, setTimeSignature] = useState('4/4')
+  const [enableContine, setEnableContinue] = useState(false)
   const [isShow, setIsShow] = useState(true) 
   const [title, setTitle] = useState('')
-  const [err, setErr] = useState('')
   const [keySn, setKeySn] = useState('C')
-  const { handleSong } = useContext(SongInfoContext)
+  const { handleSong, setSongInfo } = useContext(SongInfoContext)
   const history = useHistory()
   if (sessionStorage.getItem('token') === undefined) {
     history.push('/login')
   }
+
   const onHide = () => {
-    if (title === '') {
-      setErr('title')
-      return
-    }
     handleSong([{keySignature: keySn, saveName: title, streamParts: [], timeSignature: timeSignature}])
+    setSongInfo(title, timeSignature, keySn)
     setIsShow(false)
     history.push('/song')
   }
+
+  const onTitleChange = (e) => {
+    setTitle(e.target.value)
+    setEnableContinue(e.target.value.length > 0)
+  }
+
   const onAboutClick = () => {
     setIsShow(false)
     history.push('/')
@@ -63,24 +69,18 @@ export const InitDialog = () => {
     >
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
-          Initial your song
+          Tạo bài hát
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="titleId">
-            <Form.Label>Title</Form.Label>
-            <Form.Control type="text" placeholder="Enter title of your song" onChange={(e) => setTitle(e.target.value)}></Form.Control> 
+            <Form.Label>Tên bài hát</Form.Label>
+            <Form.Control type="text" placeholder="Vui lòng nhập tên bài hát" onChange={onTitleChange}></Form.Control> 
           </Form.Group>
-          {
-            err === 'title' &&
-                <Form.Text className="text-muted">
-                    Please enter title of song
-                </Form.Text>
-          }
 
           <Form.Group className="mb-3" controlId="timeSnId">
-            <Form.Label>TimeSignature</Form.Label>
+            <Form.Label>Số chỉ nhịp</Form.Label>
             <Form.Control as="select" custom onChange={(e) => setTimeSignature(e.target.value)}>
               <option value='4/4'>4/4</option>
               <option value='3/4'>3/4</option>
@@ -89,7 +89,7 @@ export const InitDialog = () => {
                 
           </Form.Group>
           <Form.Group className="mb-3" controlId="keySnId">
-            <Form.Label>Key Signature</Form.Label>
+            <Form.Label>Giọng/ tông</Form.Label>
             <Form.Control as="select" custom onChange={(e) => setKeySn(e.target.value)}>
               { keySignatures.map((v, idx) => {
                 return <option key={idx}>{v}</option>
@@ -100,8 +100,8 @@ export const InitDialog = () => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={() => onHide()}>Create</Button>
-        <Button onClick={() => onAboutClick()}>About</Button>
+        <Button onClick={onHide} isEnable={enableContine}>Tiếp tục</Button>
+        <Button onClick={() => onAboutClick()}>Quay lại</Button>
       </Modal.Footer>
     </Modal>
   )
