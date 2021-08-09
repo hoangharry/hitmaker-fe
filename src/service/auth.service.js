@@ -16,10 +16,3 @@ export const login = (usrname, pwd) => {
     password: pwd,
   })
 }
-
-export const logout = () => {
-  sessionStorage.removeItem('token')
-  sessionStorage.removeItem('name')
-}
-
-

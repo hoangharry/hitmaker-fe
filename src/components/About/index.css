@@ -1,0 +1,56 @@
+.lading-page-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lading-page-content .item{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lading-page-content .greeting {
+  margin: 20px 20px  50px;
+  text-align: center;
+}
+
+.lading-page-content .greeting.unauth{
+  margin: 20px 100px  50px;
+  text-align:left;
+}
+
+.lading-page-content .greeting  .username {
+  font-weight: bold;
+  color: coral;
+}
+
+.lading-page-content .intro-container {
+  margin: 0 100px;
+}
+
+.lading-page-content .authen {
+  margin-top: 20px;
+}
+
+.lading-page-content .intro-container .main-logo {
+  max-width: 192px;
+  width: 192px;
+}
+
+.hit-maker-logo {
+  cursor: pointer;
+  font-size: 32px ;
+  width: 60px;
+}
+
+@media (max-width: 768px) {
+  .lading-page-content .intro-container {
+    margin: 0 20px;
+  }
+  .lading-page-content .greeting.unauth{
+    margin: 20px 20px  50px;
+  }
+}

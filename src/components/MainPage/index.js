@@ -7,6 +7,7 @@ import { SongInfoContext } from 'src/context/SongInfoContext'
 import { generateSong, saveSong, downloadSong } from 'src/service/user.service'
 import { ErrorDialog, NoInternetDialog } from 'src/components/Dialog'
 import { DEFAULT_CLEF } from 'src/constants'
+import ErrorBoundary from 'src/components/ErrorBoundary'
 
 import './index.css'
 
@@ -126,23 +127,25 @@ export function MainPage(props) {
       <div div className="main-page-container">
         {showLoading && <Loading />}
         <TopNavbar/>
-        <div className="main-page">
-          <Toolbar
-            onClickNote={onClickNote}
-            onChangeNote={onChangeNote}
-            onDeleteNote={onDeleteNote}
-            onGenerate={onGenerate}
-            onDownload={onDownload}  
-            onChangeKeySn={onChangeKeySn}
-            onChangeStave={onChangeStave}  
-            onSaveSong={onSaveSong}               
-          />
-          <Score notes={notes}
-            onDeleteNote={onDeleteNote}
-            firstClef={DEFAULT_CLEF}
-            keySignature={keySignature}
-          />
-        </div>
+        <ErrorBoundary>
+          <div className="main-page">
+            <Toolbar
+              onClickNote={onClickNote}
+              onChangeNote={onChangeNote}
+              onDeleteNote={onDeleteNote}
+              onGenerate={onGenerate}
+              onDownload={onDownload}  
+              onChangeKeySn={onChangeKeySn}
+              onChangeStave={onChangeStave}  
+              onSaveSong={onSaveSong}               
+            />
+            <Score notes={notes}
+              onDeleteNote={onDeleteNote}
+              firstClef={DEFAULT_CLEF}
+              keySignature={keySignature}
+            />
+          </div>
+        </ErrorBoundary>
       </div>
     </>
   )

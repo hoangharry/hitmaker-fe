@@ -7,12 +7,10 @@ import { SongInfoContextProvider } from './context/SongInfoContext'
 import App from './App'
 
 ReactDOM.render(
-  <React.StrictMode>
-    <SongInfoContextProvider>
-      <Router>
-        <App />
-      </Router>
-    </SongInfoContextProvider>
-  </React.StrictMode>,
+  <SongInfoContextProvider>
+    <Router>
+      <App />
+    </Router>
+  </SongInfoContextProvider>,
   document.getElementById('root')
 )

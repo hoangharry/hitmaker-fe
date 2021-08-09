@@ -21,7 +21,7 @@ export function Score(props) {
   mapDuration.set(12, '4d')
   mapDuration.set(3, '16d')
   mapDuration.set(6, '8d')
-  const { isLogin, song } = useContext(SongInfoContext)
+  const { song, input } = useContext(SongInfoContext)
   const getBeatPerBar = () => {
     if (song[0].timeSignature === '4/4') {
       return 32
@@ -375,27 +375,19 @@ export function Score(props) {
   }
 
   useEffect(() => {
-    if (!isLogin) {
-      history.push('/login')
-    } else {
-      if (song === undefined ||  song[0] === undefined ||
-        song[0].timeSignature === undefined || song[0].timeSignature === '') {
-        history.push('/init')
-      } else {
-        const beatsPerBar = getBeatPerBar()
-        document.getElementById('new-song').innerHTML = ''
-        var notesProp = props.notes
-        const svgContainer = document.getElementById('new-song')
-            
-        var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG)
-        const width = svgContainer.getBoundingClientRect().width
-        renderer.resize(width, 1000)
-        var context = renderer.getContext()
-        drawNotes(0, context, svgContainer, props, beatsPerBar)
-        drawNotes(1, context, svgContainer, props, beatsPerBar)
-      }
+    if (song[0] !== undefined) {
+      const beatsPerBar = getBeatPerBar()
+      document.getElementById('new-song').innerHTML = ''
+      const svgContainer = document.getElementById('new-song')
+          
+      var renderer = new VF.Renderer(svgContainer, VF.Renderer.Backends.SVG)
+      const width = svgContainer.getBoundingClientRect().width
+      renderer.resize(width, 1000)
+      var context = renderer.getContext()
+      drawNotes(0, context, svgContainer, props, beatsPerBar)
+      drawNotes(1, context, svgContainer, props, beatsPerBar)
     }
-  }, [])
+  }, [props.notes, song])
 
   return (
     <>
